@@ -29,3 +29,14 @@ region_rect = Rect2( 0, 0, 140, 20 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="Corner" type="Sprite" parent="."]
+visible = false
+position = Vector2( 10, 10 )
+rotation = 1.5708
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 20, 20 )
+__meta__ = {
+"_edit_group_": true
+}
