@@ -8,23 +8,37 @@ var maze = [5, 4,
 0, 1, 1, 0, 1, 0, 0, 0, 0, 0,
 1, 1, 0, 0, 0, 1, 0, 1, 0, 1]
 
+var buffer = PoolStringArray()
+
+func read_next_byte_from_csv(file):
+	if buffer.size() == 0 || buffer.size() == 1:
+		buffer = file.get_csv_line()
+	var result = buffer[0] as int
+	buffer.remove(0)
+	return result
+
 func read_file(file_name):
 	var file = File.new()
-	file.open("user://" + file_name, File.READ)
-	var w = file.get_8()
-	var h = file.get_8()
+	file.open("res://" + file_name, File.READ)
+	print("e: ", file.get_error(), ", available: ", file.is_open())
+	var buffer = PoolStringArray()
+	var w = read_next_byte_from_csv(file)
+	var h = read_next_byte_from_csv(file)
+	print("w: ", w, ", h: ", h)
 	var repo = make_array_of_cells(w,h)
 	var x = 0
 	var y = 0
-	while (x+1)*(y+1) != 2*w*h:
-		var up = file.get_8()
-		var left = file.get_8()
-		if x == 2*w:
+	while (x+1)*(y+1) != w*h:
+		var up = read_next_byte_from_csv(file)
+		var left = read_next_byte_from_csv(file)
+		if x == w:
 			y = y + 1
 			x = 0
-		x = x + 1
 		var cell = configure_cell(repo,x,y,up,left)
+		print("ac: ", x, ' ', y)
+		x = x + 1
 		add_child(cell)
+	finalize_rep(w,h)
 	return repo
 
 func write_file(file_name, repo):
@@ -57,13 +71,16 @@ func create_rep(maze):
 			if maze[2*x+2*y*w+3] == 1: left = true
 			var cell = configure_cell(repo,x,y,up,left)
 			add_child(cell)
-			print(x, " - ", y, "u", up, " l", left)
+#			print(x, " - ", y, "u", up, " l", left)
+	finalize_rep(w,h)
+	return repo
+
+func finalize_rep(w,h):
 	for x in range(0, w):
 		add_child(create_cell(x,h,true,false))
 	for y in range(0, h):
 		add_child(create_cell(w,y,false,true))
 	add_child(create_corner_cell(w,h))
-	return repo
 
 func create_cell(x,y,up,left):
 	var cell = Cell.instance()
@@ -104,4 +121,5 @@ func new_game():
 
 func _ready():
 	randomize()
-	var repo = create_rep(maze)
+	var repo = read_file("maze1.txt")
+#	var repo = create_rep(maze)
