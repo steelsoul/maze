@@ -225,6 +225,18 @@ func show_solution(repo, marks_array, xf, yf):
 				break
 		n_iter = n_iter - 1
 	
+func put_player(xs, ys):
+	$Player.visible = true
+	var cellsize = Cell.instance().get_size()
+	var cellsize_2 = cellsize / 2
+	$Player.position = Vector2(xs * cellsize + cellsize_2, ys * cellsize + cellsize_2)
+	
+func put_goal(xf, yf):
+	$Goal.visible = true
+	var cellsize = Cell.instance().get_size()
+	var cellsize_2 = cellsize / 2
+	$Goal.position = Vector2(xf * cellsize + cellsize_2, yf * cellsize + cellsize_2)
+	
 func _ready():
 	randomize()
 	var repo_info = read_file("maze1.txt")
@@ -232,7 +244,9 @@ func _ready():
 	var ys = 0
 	var xf = 4
 	var yf = 0
+	put_player(xs, ys)
+	put_goal(xf, yf)
 	var solution_info = solve_maze_with_wave_tracing(repo_info, xs, ys, xf, yf)
 	print("can solve: ", solution_info[0])
-	if solution_info[0]:
-		show_solution(repo_info, solution_info[1], xf, yf)
+#	if solution_info[0]:
+#		show_solution(repo_info, solution_info[1], xf, yf)

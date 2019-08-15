@@ -1,19 +1,21 @@
 extends Node2D
 
 func get_size():
-	return max($Up.region_rect.size.x, $Up.region_rect.size.y)
+	return max($UpBody/Up.region_rect.size.x, $UpBody/Up.region_rect.size.y)
 
 func is_left():
-	return $Left.visible
+	return $LeftBody.visible
 
 func is_top():
-	return $Up.visible
+	return $UpBody.visible
 
 func setup(up, left):
 	if left:
-		$Left.visible = true
+		$LeftBody.visible = true
+		$LeftBody/LeftCollisionShape.disabled = false
 	if up:
-		$Up.visible = true
+		$UpBody.visible = true
+		$UpBody/UpCollisionShape.disabled = false
 
 func make_corner():
 	$Corner.visible = true
