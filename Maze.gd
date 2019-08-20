@@ -224,19 +224,125 @@ func show_solution(repo, marks_array, xf, yf):
 						x = x + 1
 				break
 		n_iter = n_iter - 1
-	
+
 func put_player(xs, ys):
 	$Player.visible = true
 	var cellsize = Cell.instance().get_size()
 	var cellsize_2 = cellsize / 2
 	$Player.position = Vector2(xs * cellsize + cellsize_2, ys * cellsize + cellsize_2)
-	
+
 func put_goal(xf, yf):
 	$Goal.visible = true
 	var cellsize = Cell.instance().get_size()
 	var cellsize_2 = cellsize / 2
 	$Goal.position = Vector2(xf * cellsize + cellsize_2, yf * cellsize + cellsize_2)
-	
+
+enum PrimaStageAttribute {Inside, Outside, Border}
+
+func generate_prima(dim, start, end):
+	var width = dim.x
+	var height = dim.y
+	var rep = make_array_of_cells(width, height)
+	for x in width:
+		for y in height:
+			rep[x][y].setup(true, true)
+	var attribute_array = []
+	attribute_array.resize(width * height)
+	var index = dim.x * dim.y as int
+	var ri = randi() as int 
+	var random_index = ri % index
+	while index > 0:
+		attribute_array[index] = PrimaStageAttribute.Outside
+	attribute_array[random_index] = PrimaStageAttribute.Inside
+	change_attribute_for_neighbours(PrimaStageAttribute.Border, PrimaStageAttribute.Outside, random_index, dim, attribute_array)
+	var shall_generate = true
+	while shall_generate:
+		var has_border_result = has_border(attribute_array)
+		if has_border_result == false:
+			shall_generate = false
+		else:
+			var border_indexes = has_border_result[1]
+			var random_location_index = randi() % border_indexes.size()
+			attribute_array[random_location_index] = PrimaStageAttribute.Inside
+			change_attribute_for_neighbours(PrimaStageAttribute.Border, PrimaStageAttribute.Outside, random_location_index, dim, attribute_array)
+			var dest_neighbour = get_random_destination_neighbour(random_location_index, dim, attribute_array)
+			break_the_wall(get_coordinate_from_index(random_location_index, dim), dest_neighbour, rep)
+	return [width, height, rep] 
+
+func change_attribute_for_neighbours(new_attribute, required_attribute, index, dim, attribute_array):
+	var location = get_coordinate_from_index(index, dim)
+	for x in [location.x-1, location.x+1]:
+		if x > 0 and x < dim.x:
+			var new_index = get_index_from_coord(x, location.y)
+			if attribute_array[new_index] == required_attribute:
+				attribute_array[new_index] = new_attribute
+	for y in [location.y-1, location.y+1]:
+		if y > 0 and y < dim.y:
+			var new_index = get_index_from_coord(location.x, y)
+			if attribute_array[new_index] == required_attribute:
+				attribute_array[new_index] = new_attribute
+
+func get_coordinate_from_index(index, dim):
+	var width = index.x
+	var heigth = index.y
+	var x = index % width
+	var y = (index / width) as int
+	return Vector2(x,y)
+
+func get_index_from_coord(coord, dim):
+	return coord.y * dim.x + coord.x
+
+func has_border(attribute_array):
+	var result = false
+	var available_indexes = []
+	for i in attribute_array.size():
+		if attribute_array[i] == PrimaStageAttribute.Border:
+			available_indexes.append(i)
+			result = true
+	if result:
+		return [result, available_indexes]
+	else:
+		return false
+
+func get_random_destination_neighbour(location_index, dim, attribute_array):
+	var matching_array_with_inside = []
+	var current_coordinate = get_coordinate_from_index(location_index, dim)
+	for x in [current_coordinate.x - 1, current_coordinate.x + 1]:
+		if x > 0 and x < dim.x:
+			var local_index = get_index_from_coord(Vector2(x, current_coordinate.y), dim)
+			if attribute_array[local_index] == PrimaStageAttribute.Inside:
+				matching_array_with_inside.append(local_index)
+	for y in [current_coordinate.y - 1, current_coordinate.y + 1]:
+		if y > 0 and y < dim.y:
+			var local_index = get_index_from_coord(Vector2(current_coordinate.x, y), dim)
+			if attribute_array[local_index] == PrimaStageAttribute.Inside:
+				matching_array_with_inside.append(local_index)
+	var random_neighbour_index = randi() % matching_array_with_inside.size()
+	var dest_coordinate = get_coordinate_from_index(random_neighbour_index, dim)
+	return dest_coordinate
+
+func break_the_wall(current, dest, rep):
+	if current.x < dest.x:
+		var cell = rep[dest.x][dest.y]
+		var up = cell.is_top()
+		cell.setup(up, false)
+		rep[dest.x][dest.y] = cell
+	elif current.x > dest.x:
+		var cell = rep[current.x][current.y]
+		var up = cell.is_top()
+		cell.setup(up, false)
+		rep[current.x][current.y] = cell
+	elif current.y < dest.y:
+		var cell = rep[dest.x][dest.y]
+		var left = cell.is_left()
+		cell.setup(false, left)
+		rep[dest.x][dest.y] = cell
+	else:
+		var cell = rep[current.x][current.y]
+		var left = cell.is_left()
+		cell.setup(false, left)
+		rep[current.x][current.y] = cell
+
 func _ready():
 	randomize()
 	var repo_info = read_file("maze1.txt")
@@ -250,3 +356,4 @@ func _ready():
 	print("can solve: ", solution_info[0])
 #	if solution_info[0]:
 #		show_solution(repo_info, solution_info[1], xf, yf)
+	generate_prima(Vector2(5,5), Vector2(0,0), Vector2(4, 4))
