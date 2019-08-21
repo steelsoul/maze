@@ -20,6 +20,7 @@ func set_direction_from_gravity_sensor(direct_vector):
 	var acc_vec = Input.get_accelerometer() as Vector3
 	if acc_vec.length() != 0:
 		direct_vector = Vector2(acc_vec.x, acc_vec.y)
+		direct_vector.y = -1 * direct_vector.y
 	return direct_vector
 
 func _physics_process(delta):
