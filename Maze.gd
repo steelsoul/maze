@@ -5,14 +5,16 @@ export (PackedScene) var Ball
 
 enum Dir {Left, Right, Down, Up}
 var buffer = PoolStringArray()
+var g_repoinfo
+var g_start = Vector2(0, 0)
+var g_finish = Vector2(0,0)
 
 func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 	var w = repo[0]
 	var h = repo[1]
-	var rep = repo[2]
 	var marks_array = create_marks_array(w,h)
 	var n_iter = 1
-	marks_array[xs][ys] = 1
+	marks_array[xs][ys] = n_iter
 	var finished = false
 	while !finished:
 		var x = 0
@@ -20,12 +22,10 @@ func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 		while x < w:
 			var y = 0
 			while y < h:
-				if n_iter == 4: 
-					print("!")
 				if marks_array[x][y] == n_iter:
 					for dir in Dir.values():
 						if can_go(repo, x, y, dir, marks_array, 0):
-							print("can go ", describe(dir),  " from (", x, ",", y, ") on iter ", n_iter)
+#							print("can go ", describe(dir),  " from (", x, ",", y, ") on iter ", n_iter)
 							no_further_steps = false
 							mark_neighbour(marks_array, x, y, dir, n_iter + 1)
 							if check_finish(x, y, xf, yf, dir) == true:
@@ -93,6 +93,15 @@ func check_finish(x, y, xf, yf, dir):
 	else: yn = y + 1
 	return xf == xn and yf == yn
 
+func load_repo(repo):
+	var width = repo[0]
+	var height = repo[1]
+	var cells = repo[2]
+	for x in width:
+		for y in height:
+			add_child(cells[x][y])
+	finalize_rep(width, height)
+
 func read_file(file_name):
 	var file = File.new()
 	file.open("res://" + file_name, File.READ)
@@ -109,11 +118,9 @@ func read_file(file_name):
 		if x == w:
 			y = y + 1
 			x = 0
-		var cell = configure_cell(repo,x,y,up,left)
+		configure_cell(repo,x,y,up,left)
 #		print("ac: ", x, ' ', y)
 		x = x + 1
-		add_child(cell)
-	finalize_rep(w,h)
 	return [w, h, repo]
 
 func write_file(file_name, repo):
@@ -174,7 +181,7 @@ func create_cell(x,y,up,left):
 func configure_cell(repo,x,y,up,left):
 	var cell = get_cell(x,y,repo)
 	var cell_size = cell.get_size()
-	cell.position = Vector2(x*cell_size, y*cell_size)
+	cell.position = Vector2((x*cell_size) as int, (y*cell_size) as int)
 	cell.setup(up, left)
 	return cell
 
@@ -239,30 +246,32 @@ func put_goal(xf, yf):
 
 enum PrimaStageAttribute {Inside, Outside, Border}
 
-func generate_prima(dim, start, end):
+func generate_prima(dim):
 	var width = dim.x
 	var height = dim.y
 	var rep = make_array_of_cells(width, height)
-	for x in width:
-		for y in height:
-			rep[x][y].setup(true, true)
+	for x in range(0, width):
+		for y in range(0, height):
+			configure_cell(rep, x, y, true, true)
 	var attribute_array = []
 	attribute_array.resize(width * height)
-	var index = dim.x * dim.y as int
-	var ri = randi() as int 
-	var random_index = ri % index
-	while index > 0:
+	var array_size = (dim.x * dim.y) as int
+	var random_index = randi() % array_size
+	var index = array_size - 1
+	while index >= 0:
 		attribute_array[index] = PrimaStageAttribute.Outside
+		index = index - 1
 	attribute_array[random_index] = PrimaStageAttribute.Inside
 	change_attribute_for_neighbours(PrimaStageAttribute.Border, PrimaStageAttribute.Outside, random_index, dim, attribute_array)
 	var shall_generate = true
 	while shall_generate:
 		var has_border_result = has_border(attribute_array)
-		if has_border_result == false:
+		if has_border_result is bool and has_border_result == false:
 			shall_generate = false
 		else:
 			var border_indexes = has_border_result[1]
-			var random_location_index = randi() % border_indexes.size()
+			random_index = randi() % border_indexes.size()
+			var random_location_index = border_indexes[random_index]
 			attribute_array[random_location_index] = PrimaStageAttribute.Inside
 			change_attribute_for_neighbours(PrimaStageAttribute.Border, PrimaStageAttribute.Outside, random_location_index, dim, attribute_array)
 			var dest_neighbour = get_random_destination_neighbour(random_location_index, dim, attribute_array)
@@ -272,25 +281,24 @@ func generate_prima(dim, start, end):
 func change_attribute_for_neighbours(new_attribute, required_attribute, index, dim, attribute_array):
 	var location = get_coordinate_from_index(index, dim)
 	for x in [location.x-1, location.x+1]:
-		if x > 0 and x < dim.x:
-			var new_index = get_index_from_coord(x, location.y)
+		if x >= 0 and x < dim.x:
+			var new_index = get_index_from_coord(Vector2(x, location.y), dim)
 			if attribute_array[new_index] == required_attribute:
 				attribute_array[new_index] = new_attribute
 	for y in [location.y-1, location.y+1]:
-		if y > 0 and y < dim.y:
-			var new_index = get_index_from_coord(location.x, y)
+		if y >= 0 and y < dim.y:
+			var new_index = get_index_from_coord(Vector2(location.x, y), dim)
 			if attribute_array[new_index] == required_attribute:
 				attribute_array[new_index] = new_attribute
 
 func get_coordinate_from_index(index, dim):
-	var width = index.x
-	var heigth = index.y
-	var x = index % width
+	var width = dim.x as int
+	var x = (index as int) % width
 	var y = (index / width) as int
 	return Vector2(x,y)
 
 func get_index_from_coord(coord, dim):
-	return coord.y * dim.x + coord.x
+	return coord.y * (dim.x as int) + coord.x
 
 func has_border(attribute_array):
 	var result = false
@@ -308,20 +316,21 @@ func get_random_destination_neighbour(location_index, dim, attribute_array):
 	var matching_array_with_inside = []
 	var current_coordinate = get_coordinate_from_index(location_index, dim)
 	for x in [current_coordinate.x - 1, current_coordinate.x + 1]:
-		if x > 0 and x < dim.x:
+		if x >= 0 and x < dim.x:
 			var local_index = get_index_from_coord(Vector2(x, current_coordinate.y), dim)
 			if attribute_array[local_index] == PrimaStageAttribute.Inside:
 				matching_array_with_inside.append(local_index)
 	for y in [current_coordinate.y - 1, current_coordinate.y + 1]:
-		if y > 0 and y < dim.y:
+		if y >= 0 and y < dim.y:
 			var local_index = get_index_from_coord(Vector2(current_coordinate.x, y), dim)
 			if attribute_array[local_index] == PrimaStageAttribute.Inside:
 				matching_array_with_inside.append(local_index)
 	var random_neighbour_index = randi() % matching_array_with_inside.size()
-	var dest_coordinate = get_coordinate_from_index(random_neighbour_index, dim)
+	var dest_coordinate = get_coordinate_from_index(matching_array_with_inside[random_neighbour_index], dim)
 	return dest_coordinate
 
 func break_the_wall(current, dest, rep):
+#	print("bw: ", current, " to ", dest)
 	if current.x < dest.x:
 		var cell = rep[dest.x][dest.y]
 		var up = cell.is_top()
@@ -345,15 +354,18 @@ func break_the_wall(current, dest, rep):
 
 func _ready():
 	randomize()
-	var repo_info = read_file("maze1.txt")
-	var xs = 0
-	var ys = 0
-	var xf = 4
-	var yf = 0
-	put_player(xs, ys)
-	put_goal(xf, yf)
-	var solution_info = solve_maze_with_wave_tracing(repo_info, xs, ys, xf, yf)
+#	var repo_info = read_file("maze1.txt")
+	var dim_x = 15
+	var dim_y = 10
+	g_finish = Vector2(dim_x - 1, dim_y - 1)
+	var repo_info = generate_prima(Vector2(dim_x, dim_y))
+	load_repo(repo_info)
+	g_repoinfo = repo_info
+	put_player(g_start.x, g_start.y)
+	put_goal(g_finish.x, g_finish.y)
+
+func _on_Button_pressed():
+	var solution_info = solve_maze_with_wave_tracing(g_repoinfo, g_start.x, g_start.y, g_finish.x, g_finish.y)
 	print("can solve: ", solution_info[0])
-#	if solution_info[0]:
-#		show_solution(repo_info, solution_info[1], xf, yf)
-	generate_prima(Vector2(5,5), Vector2(0,0), Vector2(4, 4))
+	if solution_info[0]:
+		show_solution(g_repoinfo, solution_info[1], g_finish.x, g_finish.y)

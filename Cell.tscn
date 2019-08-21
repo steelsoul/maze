@@ -10,6 +10,7 @@ extents = Vector2( 70, 10 )
 extents = Vector2( 10, 70 )
 
 [node name="Cell" type="Node2D"]
+scale = Vector2( 0.4, 0.4 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true

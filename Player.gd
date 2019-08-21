@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-export var movement_speed = 10
+export var movement_speed = 20
 
 func _ready():
 	pass

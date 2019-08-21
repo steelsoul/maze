@@ -13,7 +13,17 @@ Ball = ExtResource( 3 )
 
 [node name="Goal" parent="." instance=ExtResource( 4 )]
 visible = false
+scale = Vector2( 0.5, 0.5 )
 
 [node name="Player" parent="." instance=ExtResource( 5 )]
 visible = false
-movement_speed = 50
+scale = Vector2( 0.5, 0.5 )
+movement_speed = 100
+
+[node name="Button" type="Button" parent="."]
+margin_left = 900.0
+margin_top = 20.0
+margin_right = 1010.0
+margin_bottom = 190.0
+text = "Solve"
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
