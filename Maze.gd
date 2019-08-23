@@ -355,8 +355,8 @@ func break_the_wall(current, dest, rep):
 func _ready():
 	randomize()
 #	var repo_info = read_file("maze1.txt")
-	var dim_x = 15
-	var dim_y = 10
+	var dim_x = 3
+	var dim_y = 3
 	g_finish = Vector2(dim_x - 1, dim_y - 1)
 	var repo_info = generate_prima(Vector2(dim_x, dim_y))
 	load_repo(repo_info)
@@ -369,3 +369,6 @@ func _on_Button_pressed():
 	print("can solve: ", solution_info[0])
 	if solution_info[0]:
 		show_solution(g_repoinfo, solution_info[1], g_finish.x, g_finish.y)
+
+func _on_Goal_reach_goal():
+	print("Hey, you have won! Congrats!!!")
