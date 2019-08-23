@@ -250,9 +250,7 @@ func generate_prima(dim):
 	var width = dim.x
 	var height = dim.y
 	var rep = make_array_of_cells(width, height)
-	for x in range(0, width):
-		for y in range(0, height):
-			configure_cell(rep, x, y, true, true)
+	rep = make_repo_with_all_walls(dim, rep)
 	var attribute_array = []
 	attribute_array.resize(width * height)
 	var array_size = (dim.x * dim.y) as int
@@ -277,6 +275,14 @@ func generate_prima(dim):
 			var dest_neighbour = get_random_destination_neighbour(random_location_index, dim, attribute_array)
 			break_the_wall(get_coordinate_from_index(random_location_index, dim), dest_neighbour, rep)
 	return [width, height, rep] 
+
+func make_repo_with_all_walls(dim, rep):
+	var width = dim.x
+	var height = dim.y
+	for x in range(0, width):
+		for y in range(0, height):
+			configure_cell(rep, x, y, true, true)
+	return rep
 
 func change_attribute_for_neighbours(new_attribute, required_attribute, index, dim, attribute_array):
 	var location = get_coordinate_from_index(index, dim)
@@ -330,7 +336,7 @@ func get_random_destination_neighbour(location_index, dim, attribute_array):
 	return dest_coordinate
 
 func break_the_wall(current, dest, rep):
-#	print("bw: ", current, " to ", dest)
+	print("bw: ", current, " to ", dest)
 	if current.x < dest.x:
 		var cell = rep[dest.x][dest.y]
 		var up = cell.is_top()
@@ -352,13 +358,61 @@ func break_the_wall(current, dest, rep):
 		cell.setup(false, left)
 		rep[current.x][current.y] = cell
 
+func generate_kruskal(dim):
+	var width = dim.x
+	var height = dim.y
+	var locations = dim.x * dim.y
+	var rep = make_array_of_cells(width, height)
+	rep = make_repo_with_all_walls(dim, rep)
+	var array_for_random_walls = make_array_of_walls(width, height)
+	var random_wall_index = 0
+	while locations > 1:
+		print("generation, completed: ", 100 - locations / (dim.x * dim.y) * 100)
+		var random_wall = array_for_random_walls[random_wall_index]
+		random_wall_index = random_wall_index + 1
+		var locations_separated_by_wall = get_locations_separated_by_wall(random_wall)
+		var first_location = locations_separated_by_wall[0]
+		var second_location = locations_separated_by_wall[1]
+		var repo = [width, height, rep]
+		if not has_path(repo, first_location, second_location):
+				break_the_wall(first_location, second_location, rep)
+				locations = locations - 1
+	return [width, height, rep]
+
+func make_array_of_walls(width, height):
+	var result_array_of_walls = []
+	var x = 0
+	var y = 0
+	for i in width*height:
+		if x != 0:
+			result_array_of_walls.append([Vector2(x,y), false]) #left
+		if y != 0:
+			result_array_of_walls.append([Vector2(x,y), true]) #up
+		x = x + 1
+		if x == width:
+			x =  0
+			y = y + 1
+	result_array_of_walls.shuffle()
+	return result_array_of_walls
+
+func has_path(repo, from, to):
+	return solve_maze_with_wave_tracing(repo, from.x, from.y, to.x, to.y)[0] == true
+
+func get_locations_separated_by_wall(random_wall):
+	var pos = random_wall[0]
+	if random_wall[1] == true:
+		return [Vector2(pos.x, pos.y - 1), Vector2(pos.x, pos.y)]
+	else:
+		return [Vector2(pos.x - 1, pos.y), Vector2(pos.x, pos.y)]
+
 func _ready():
 	randomize()
 #	var repo_info = read_file("maze1.txt")
-	var dim_x = 3
-	var dim_y = 3
+	var dim_x = 15
+	var dim_y = 10
 	g_finish = Vector2(dim_x - 1, dim_y - 1)
-	var repo_info = generate_prima(Vector2(dim_x, dim_y))
+#	var repo_info = generate_prima(Vector2(dim_x, dim_y))
+	var repo_info = generate_kruskal(Vector2(dim_x, dim_y))
 	load_repo(repo_info)
 	g_repoinfo = repo_info
 	put_player(g_start.x, g_start.y)
