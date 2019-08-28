@@ -25,3 +25,8 @@ texture = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
 }
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+limit_smoothed = true
+smoothing_enabled = true

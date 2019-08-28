@@ -15,8 +15,8 @@ signal on_generation_done
 func _ready():
 	randomize()
 #	var repo_info = read_file("maze1.txt")
-	var dim_x = 15
-	var dim_y = 10
+	var dim_x = 30
+	var dim_y = 35
 	g_finish = Vector2(dim_x - 1, dim_y - 1)
 #	var repo_info = generate_prima(Vector2(dim_x, dim_y))
 	g_thread = Thread.new()
