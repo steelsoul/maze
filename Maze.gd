@@ -5,9 +5,41 @@ export (PackedScene) var Ball
 
 enum Dir {Left, Right, Down, Up}
 var buffer = PoolStringArray()
-var g_repoinfo
 var g_start = Vector2(0, 0)
 var g_finish = Vector2(0,0)
+var g_thread
+var g_rep
+
+signal on_generation_done
+
+func _ready():
+	randomize()
+#	var repo_info = read_file("maze1.txt")
+	var dim_x = 15
+	var dim_y = 10
+	g_finish = Vector2(dim_x - 1, dim_y - 1)
+#	var repo_info = generate_prima(Vector2(dim_x, dim_y))
+	g_thread = Thread.new()
+	g_thread.start(self, "generate_kruskal", Vector2(dim_x, dim_y))
+#	g_thread.start(self, "generate_prima", Vector2(dim_x, dim_y))
+	#var repo_info = generate_kruskal(Vector2(dim_x, dim_y))
+
+func _exit_tree():
+	g_thread.wait_to_finish()
+
+func _on_Button_pressed():
+	var solution_info = solve_maze_with_wave_tracing(g_rep, g_start.x, g_start.y, g_finish.x, g_finish.y)
+	print("can solve: ", solution_info[0])
+	if solution_info[0]:
+		show_solution(g_rep, solution_info[1], g_finish.x, g_finish.y)
+
+func _on_Goal_reach_goal():
+	print("Hey, you have won! Congrats!!!")
+
+func _on_Maze_on_generation_done():
+	load_repo(g_rep)
+	put_player(g_start.x, g_start.y)
+	put_goal(g_finish.x, g_finish.y)
 
 func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 	var w = repo[0]
@@ -269,12 +301,14 @@ func generate_prima(dim):
 		else:
 			var border_indexes = has_border_result[1]
 			random_index = randi() % border_indexes.size()
+			print("progress: ", border_indexes.size() / (dim.x * dim.y) * 100)
 			var random_location_index = border_indexes[random_index]
 			attribute_array[random_location_index] = PrimaStageAttribute.Inside
 			change_attribute_for_neighbours(PrimaStageAttribute.Border, PrimaStageAttribute.Outside, random_location_index, dim, attribute_array)
 			var dest_neighbour = get_random_destination_neighbour(random_location_index, dim, attribute_array)
 			break_the_wall(get_coordinate_from_index(random_location_index, dim), dest_neighbour, rep)
-	return [width, height, rep] 
+	g_rep = [width, height, rep]
+	emit_signal("on_generation_done")
 
 func make_repo_with_all_walls(dim, rep):
 	var width = dim.x
@@ -377,7 +411,8 @@ func generate_kruskal(dim):
 		if not has_path(repo, first_location, second_location):
 				break_the_wall(first_location, second_location, rep)
 				locations = locations - 1
-	return [width, height, rep]
+	g_rep = [width, height, rep]
+	emit_signal("on_generation_done")
 
 func make_array_of_walls(width, height):
 	var result_array_of_walls = []
@@ -404,25 +439,3 @@ func get_locations_separated_by_wall(random_wall):
 		return [Vector2(pos.x, pos.y - 1), Vector2(pos.x, pos.y)]
 	else:
 		return [Vector2(pos.x - 1, pos.y), Vector2(pos.x, pos.y)]
-
-func _ready():
-	randomize()
-#	var repo_info = read_file("maze1.txt")
-	var dim_x = 15
-	var dim_y = 10
-	g_finish = Vector2(dim_x - 1, dim_y - 1)
-#	var repo_info = generate_prima(Vector2(dim_x, dim_y))
-	var repo_info = generate_kruskal(Vector2(dim_x, dim_y))
-	load_repo(repo_info)
-	g_repoinfo = repo_info
-	put_player(g_start.x, g_start.y)
-	put_goal(g_finish.x, g_finish.y)
-
-func _on_Button_pressed():
-	var solution_info = solve_maze_with_wave_tracing(g_repoinfo, g_start.x, g_start.y, g_finish.x, g_finish.y)
-	print("can solve: ", solution_info[0])
-	if solution_info[0]:
-		show_solution(g_repoinfo, solution_info[1], g_finish.x, g_finish.y)
-
-func _on_Goal_reach_goal():
-	print("Hey, you have won! Congrats!!!")

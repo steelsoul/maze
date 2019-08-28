@@ -26,5 +26,6 @@ margin_top = 20.0
 margin_right = 1010.0
 margin_bottom = 190.0
 text = "Solve"
+[connection signal="on_generation_done" from="." to="." method="_on_Maze_on_generation_done"]
 [connection signal="reach_goal" from="Goal" to="." method="_on_Goal_reach_goal"]
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
