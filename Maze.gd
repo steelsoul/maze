@@ -11,12 +11,13 @@ var g_thread
 var g_rep
 
 signal on_generation_done
+signal generation_progress
 
 func _ready():
 	randomize()
 #	var repo_info = read_file("maze1.txt")
-	var dim_x = 30
-	var dim_y = 35
+	var dim_x = 60
+	var dim_y = 15
 	g_finish = Vector2(dim_x - 1, dim_y - 1)
 #	var repo_info = generate_prima(Vector2(dim_x, dim_y))
 	g_thread = Thread.new()
@@ -37,6 +38,7 @@ func _on_Goal_reach_goal():
 	print("Hey, you have won! Congrats!!!")
 
 func _on_Maze_on_generation_done():
+	$Progress.visible = false
 	load_repo(g_rep)
 	put_player(g_start.x, g_start.y)
 	put_goal(g_finish.x, g_finish.y)
@@ -401,7 +403,9 @@ func generate_kruskal(dim):
 	var array_for_random_walls = make_array_of_walls(width, height)
 	var random_wall_index = 0
 	while locations > 1:
-		print("generation, completed: ", 100 - locations / (dim.x * dim.y) * 100)
+		var progress = 100 - locations / (dim.x * dim.y) * 100
+		print("generation, completed: ", progress)
+		emit_signal("generation_progress", progress)
 		var random_wall = array_for_random_walls[random_wall_index]
 		random_wall_index = random_wall_index + 1
 		var locations_separated_by_wall = get_locations_separated_by_wall(random_wall)
@@ -409,8 +413,8 @@ func generate_kruskal(dim):
 		var second_location = locations_separated_by_wall[1]
 		var repo = [width, height, rep]
 		if not has_path(repo, first_location, second_location):
-				break_the_wall(first_location, second_location, rep)
-				locations = locations - 1
+			break_the_wall(first_location, second_location, rep)
+			locations = locations - 1
 	g_rep = [width, height, rep]
 	emit_signal("on_generation_done")
 
@@ -439,3 +443,6 @@ func get_locations_separated_by_wall(random_wall):
 		return [Vector2(pos.x, pos.y - 1), Vector2(pos.x, pos.y)]
 	else:
 		return [Vector2(pos.x - 1, pos.y), Vector2(pos.x, pos.y)]
+
+func _on_Maze_generation_progress(progress):
+	$Progress.text = "Progress: " + ceil(progress) as String
