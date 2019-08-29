@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://TextWithSlider.gd" type="Script" id=1]
+
+[node name="TextWithSlider" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 150.0
+margin_bottom = 16.0
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+margin_top = 2.0
+margin_right = 16.0
+margin_bottom = 16.0
+size_flags_horizontal = 9
+size_flags_vertical = 14
+text = "35"
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer"]
+margin_left = 20.0
+margin_right = 150.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 3.0
+max_value = 30.0
+value = 3.0
+tick_count = 28
+[connection signal="gui_input" from="HBoxContainer" to="." method="_on_HBoxContainer_gui_input"]
+[connection signal="resized" from="HBoxContainer/HSlider" to="." method="_on_HSlider_resized"]
+[connection signal="value_changed" from="HBoxContainer/HSlider" to="." method="_on_HSlider_value_changed"]

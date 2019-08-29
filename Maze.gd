@@ -4,7 +4,10 @@ export (PackedScene) var Cell
 export (PackedScene) var Ball
 
 enum Dir {Left, Right, Down, Up}
+enum Algorythm {Prima, Kruskal}
 var buffer = PoolStringArray()
+var g_dim = Vector2(0, 0)
+var g_alg = Algorythm.Prima
 var g_start = Vector2(0, 0)
 var g_finish = Vector2(0,0)
 var g_thread
@@ -12,18 +15,28 @@ var g_rep
 
 signal on_generation_done
 signal generation_progress
+signal on_game_finished
 
 func _ready():
+	pass
+
+func set_dimension(dim):
+	g_dim = dim
+
+func set_algorythm(alg):
+	if alg == "kruskal":
+		g_alg = Algorythm.Kruskal
+	else:
+		g_alg = Algorythm.Prima
+
+func start_generation():
 	randomize()
-#	var repo_info = read_file("maze1.txt")
-	var dim_x = 60
-	var dim_y = 15
-	g_finish = Vector2(dim_x - 1, dim_y - 1)
-#	var repo_info = generate_prima(Vector2(dim_x, dim_y))
 	g_thread = Thread.new()
-	g_thread.start(self, "generate_kruskal", Vector2(dim_x, dim_y))
-#	g_thread.start(self, "generate_prima", Vector2(dim_x, dim_y))
-	#var repo_info = generate_kruskal(Vector2(dim_x, dim_y))
+	var algorythm = "generate_prima"
+	if g_alg == Algorythm.Kruskal:
+		algorythm = "generate_kruskal"
+	g_finish = Vector2(g_dim.x - 1, g_dim.y - 1)
+	g_thread.start(self, algorythm, Vector2(g_dim.x, g_dim.y))
 
 func _exit_tree():
 	g_thread.wait_to_finish()
@@ -36,6 +49,7 @@ func _on_Button_pressed():
 
 func _on_Goal_reach_goal():
 	print("Hey, you have won! Congrats!!!")
+	emit_signal("on_game_finished")
 
 func _on_Maze_on_generation_done():
 	$Progress.visible = false
@@ -274,6 +288,7 @@ func put_player(xs, ys):
 
 func put_goal(xf, yf):
 	$Goal.visible = true
+	$Goal.set_collision_enabled()
 	var cellsize = Cell.instance().get_size()
 	var cellsize_2 = cellsize / 2
 	$Goal.position = Vector2(xf * cellsize + cellsize_2, yf * cellsize + cellsize_2)

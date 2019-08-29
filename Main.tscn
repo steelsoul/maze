@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=1]
+[ext_resource path="res://Maze.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Configuration.tscn" type="PackedScene" id=3]
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 1 )
+Maze = ExtResource( 2 )
+
+[node name="Configuration" parent="." instance=ExtResource( 3 )]
+position = Vector2( 211.569, 191.607 )
+scale = Vector2( 3, 3 )
+[connection signal="configuration_done" from="Configuration" to="." method="_on_Configuration_configuration_done"]

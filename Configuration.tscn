@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Configuration.gd" type="Script" id=1]
+[ext_resource path="res://button_group.tres" type="ButtonGroup" id=2]
+[ext_resource path="res://TextWithSlider.tscn" type="PackedScene" id=3]
+
+[node name="Configuration" type="Node2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="Label" type="Label" parent="."]
+margin_right = 94.0
+margin_bottom = 14.0
+text = "Generate with:"
+
+[node name="CheckBoxPrima" type="CheckBox" parent="Label"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = 3.0
+margin_top = -12.0
+margin_bottom = 12.0
+pressed = true
+group = ExtResource( 2 )
+text = "Prima"
+
+[node name="CheckBoxKruscal" type="CheckBox" parent="Label"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = 64.0
+margin_top = -12.0
+margin_bottom = 12.0
+group = ExtResource( 2 )
+text = "Kruscal"
+
+[node name="LabelWidth" type="Label" parent="."]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = 18.0
+margin_right = 42.0
+margin_bottom = 29.0
+text = "Width:"
+
+[node name="TextWithSlider" parent="LabelWidth" instance=ExtResource( 3 )]
+position = Vector2( 59.6849, -3.29243 )
+
+[node name="LabelHeight" type="Label" parent="."]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = 36.6415
+margin_right = 46.0
+margin_bottom = 50.6415
+text = "Height:"
+
+[node name="TextWithSlider" parent="LabelHeight" instance=ExtResource( 3 )]
+position = Vector2( 59.5864, -2.47849 )
+
+[node name="Button" type="Button" parent="."]
+margin_left = 86.0366
+margin_top = 61.3011
+margin_right = 136.037
+margin_bottom = 81.3011
+text = "Ready"
+[connection signal="toggled" from="Label/CheckBoxPrima" to="." method="_on_CheckBoxPrima_toggled"]
+[connection signal="toggled" from="Label/CheckBoxKruscal" to="." method="_on_CheckBoxKruscal_toggled"]
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]
