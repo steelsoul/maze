@@ -27,6 +27,5 @@ __meta__ = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-current = true
 limit_smoothed = true
 smoothing_enabled = true

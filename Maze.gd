@@ -11,7 +11,7 @@ var g_alg = Algorythm.Prima
 var g_start = Vector2(0, 0)
 var g_finish = Vector2(0,0)
 var g_thread
-var g_rep
+var g_rep = []
 
 signal on_generation_done
 signal generation_progress
@@ -40,6 +40,8 @@ func start_generation():
 
 func _exit_tree():
 	g_thread.wait_to_finish()
+	queue_free()
+	print("_exit_tree")
 
 func _on_Button_pressed():
 	var solution_info = solve_maze_with_wave_tracing(g_rep, g_start.x, g_start.y, g_finish.x, g_finish.y)
@@ -53,9 +55,12 @@ func _on_Goal_reach_goal():
 
 func _on_Maze_on_generation_done():
 	$Progress.visible = false
+	self.visible = false
 	load_repo(g_rep)
 	put_player(g_start.x, g_start.y)
 	put_goal(g_finish.x, g_finish.y)
+	$Player.enable_camera()
+	self.visible = true
 
 func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 	var w = repo[0]
@@ -243,6 +248,10 @@ func create_corner_cell(x,y):
 func make_array_of_cells(w,h):
 	var result_maze = []
 	for x in range(w):
+		var progress_value = x / w * 10
+		if g_alg == Algorythm.Prima:
+			progress_value = progress_value * 5
+		emit_signal("generation_progress", progress_value)
 		result_maze.append([])
 		var y = 0
 		while y < h:
@@ -318,12 +327,13 @@ func generate_prima(dim):
 		else:
 			var border_indexes = has_border_result[1]
 			random_index = randi() % border_indexes.size()
-			print("progress: ", border_indexes.size() / (dim.x * dim.y) * 100)
+#			print("progress: ", border_indexes.size() / (dim.x * dim.y) * 100)
 			var random_location_index = border_indexes[random_index]
 			attribute_array[random_location_index] = PrimaStageAttribute.Inside
 			change_attribute_for_neighbours(PrimaStageAttribute.Border, PrimaStageAttribute.Outside, random_location_index, dim, attribute_array)
 			var dest_neighbour = get_random_destination_neighbour(random_location_index, dim, attribute_array)
 			break_the_wall(get_coordinate_from_index(random_location_index, dim), dest_neighbour, rep)
+	clear_grep()
 	g_rep = [width, height, rep]
 	emit_signal("on_generation_done")
 
@@ -331,6 +341,10 @@ func make_repo_with_all_walls(dim, rep):
 	var width = dim.x
 	var height = dim.y
 	for x in range(0, width):
+		var progress_value = 10 + x / width * 10
+		if g_alg == Algorythm.Prima:
+			progress_value = progress_value * 5
+		emit_signal("generation_progress", progress_value)
 		for y in range(0, height):
 			configure_cell(rep, x, y, true, true)
 	return rep
@@ -387,7 +401,7 @@ func get_random_destination_neighbour(location_index, dim, attribute_array):
 	return dest_coordinate
 
 func break_the_wall(current, dest, rep):
-	print("bw: ", current, " to ", dest)
+#	print("bw: ", current, " to ", dest)
 	if current.x < dest.x:
 		var cell = rep[dest.x][dest.y]
 		var up = cell.is_top()
@@ -409,6 +423,11 @@ func break_the_wall(current, dest, rep):
 		cell.setup(false, left)
 		rep[current.x][current.y] = cell
 
+func clear_grep():
+	if g_rep.size() != 0:
+		g_rep[2].clear()
+		g_rep.clear();
+
 func generate_kruskal(dim):
 	var width = dim.x
 	var height = dim.y
@@ -418,7 +437,7 @@ func generate_kruskal(dim):
 	var array_for_random_walls = make_array_of_walls(width, height)
 	var random_wall_index = 0
 	while locations > 1:
-		var progress = 100 - locations / (dim.x * dim.y) * 100
+		var progress = 80 - locations / (dim.x * dim.y) * 80 + 20
 		print("generation, completed: ", progress)
 		emit_signal("generation_progress", progress)
 		var random_wall = array_for_random_walls[random_wall_index]
@@ -430,6 +449,7 @@ func generate_kruskal(dim):
 		if not has_path(repo, first_location, second_location):
 			break_the_wall(first_location, second_location, rep)
 			locations = locations - 1
+	clear_grep()
 	g_rep = [width, height, rep]
 	emit_signal("on_generation_done")
 
