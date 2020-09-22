@@ -6,7 +6,7 @@ export (PackedScene) var Ball
 enum Dir {Left, Right, Down, Up}
 enum Algorythm {Prima, Kruskal}
 var buffer = PoolStringArray()
-var g_dim = Vector2(0, 0)
+#var g_dim = Vector2(0, 0)
 var g_alg = Algorythm.Prima
 var g_start = Vector2(0, 0)
 var g_finish = Vector2(0,0)
@@ -20,8 +20,8 @@ signal on_game_finished
 func _ready():
 	pass
 
-func set_dimension(dim):
-	g_dim = dim
+#func set_dimension(dim):
+#	g_dim = dim
 
 func set_algorythm(alg):
 	if alg == "kruskal":
@@ -29,14 +29,24 @@ func set_algorythm(alg):
 	else:
 		g_alg = Algorythm.Prima
 
-func start_generation():
+func start_generation(dim):
 	randomize()
 	g_thread = Thread.new()
 	var algorythm = "generate_prima"
 	if g_alg == Algorythm.Kruskal:
 		algorythm = "generate_kruskal"
-	g_finish = Vector2(g_dim.x - 1, g_dim.y - 1)
-	g_thread.start(self, algorythm, Vector2(g_dim.x, g_dim.y))
+	g_finish = Vector2.ZERO
+	match randi() % 4:
+		0: # left side
+			g_finish.y = 1 + randi() % (dim.y - 1) as int
+		1: # top side
+			g_finish.x = 1 + randi() % (dim.x - 1) as int
+		2: # right side
+			g_finish = Vector2(dim.x - 1, 1 + randi() % (dim.y - 1) as int)
+		3: # down side
+			g_finish = Vector2(1 + randi() % (dim.x - 1) as int, dim.y - 1)
+	print("fin: ", g_finish)
+	g_thread.start(self, algorythm, Vector2(dim.x, dim.y))
 
 func _exit_tree():
 	g_thread.wait_to_finish()

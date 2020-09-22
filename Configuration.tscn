@@ -49,6 +49,9 @@ margin_top = 18.0
 margin_right = 42.0
 margin_bottom = 29.0
 text = "Width:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TextWithSlider" parent="LabelWidth" instance=ExtResource( 3 )]
 position = Vector2( 59.6849, -3.29243 )

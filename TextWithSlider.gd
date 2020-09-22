@@ -1,6 +1,11 @@
 extends Node2D
 
+export (int, 10, 50) var min_slider_value = 10
+export (int, 10, 50) var max_slider_value = 50
+
 func _ready():
+	$HBoxContainer/HSlider.min_value = min_slider_value
+	$HBoxContainer/HSlider.max_value = max_slider_value
 	$HBoxContainer/DigitContainer/Label.text = $HBoxContainer/HSlider.value as String
 
 func _on_HSlider_value_changed(value):
