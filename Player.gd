@@ -28,9 +28,9 @@ func set_direction_from_gravity_sensor(direct_vector):
 #		direct_vector.y = -1 * direct_vector.y
 	return direct_vector
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	var direct_vector = Vector2()
 	direct_vector = set_direction_from_keyboard_input(direct_vector)
 	direct_vector = set_direction_from_gravity_sensor(direct_vector)
 	direct_vector = movement_speed * direct_vector.normalized()
-	move_and_slide(direct_vector)
+	direct_vector = move_and_slide(direct_vector)

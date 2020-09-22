@@ -27,6 +27,9 @@ margin_bottom = 12.0
 pressed = true
 group = ExtResource( 2 )
 text = "Prima"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CheckBoxKruscal" type="CheckBox" parent="Label"]
 anchor_left = 1.0
@@ -57,6 +60,9 @@ margin_top = 36.6415
 margin_right = 46.0
 margin_bottom = 50.6415
 text = "Height:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="TextWithSlider" parent="LabelHeight" instance=ExtResource( 3 )]
 position = Vector2( 59.5864, -2.47849 )
@@ -67,6 +73,7 @@ margin_top = 61.3011
 margin_right = 136.037
 margin_bottom = 81.3011
 text = "Ready"
-[connection signal="toggled" from="Label/CheckBoxPrima" to="." method="_on_CheckBoxPrima_toggled"]
-[connection signal="toggled" from="Label/CheckBoxKruscal" to="." method="_on_CheckBoxKruscal_toggled"]
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

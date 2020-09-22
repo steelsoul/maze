@@ -1,5 +1,6 @@
 extends Node2D
 
+var thread
 export (PackedScene) var Maze
 
 func _on_Configuration_configuration_done():
@@ -11,11 +12,18 @@ func _on_Configuration_configuration_done():
 	maze.connect("on_game_finished", self, "on_finish")
 	maze.start_generation()
 
+#cleanup after maze removal
+func _cleanup(maze):
+	maze.stop()
+	call_deferred("remove_child", maze)
+	maze.disconnect("on_game_finished", self, "on_finish")
+	maze.queue_free()
+	$Configuration.visible = true
+	thread.wait_to_finish()
+
 func on_finish():
-	print("Finish")
+	#print("Finish")
 	var maze = get_node("Maze")
 	if maze != null:
-		maze.disconnect("on_game_finished", self, "on_finish")
-		maze.queue_free()
-		remove_child(maze)
-		$Configuration.visible = true
+		thread = Thread.new()
+		thread.start(self, "_cleanup", maze)

@@ -17,7 +17,6 @@ __meta__ = {
 }
 
 [node name="Corner" type="Sprite" parent="."]
-visible = false
 position = Vector2( 10, 10 )
 rotation = 1.5708
 texture = ExtResource( 2 )

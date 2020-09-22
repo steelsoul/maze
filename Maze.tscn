@@ -40,7 +40,8 @@ margin_bottom = 328.279
 align = 1
 valign = 1
 __meta__ = {
-"_edit_group_": true
+"_edit_group_": true,
+"_edit_use_anchors_": false
 }
 [connection signal="generation_progress" from="." to="." method="_on_Maze_generation_progress"]
 [connection signal="on_generation_done" from="." to="." method="_on_Maze_on_generation_done"]

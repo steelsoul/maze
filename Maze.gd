@@ -41,7 +41,6 @@ func start_generation():
 func _exit_tree():
 	g_thread.wait_to_finish()
 	queue_free()
-	print("_exit_tree")
 
 func _on_Button_pressed():
 	var solution_info = solve_maze_with_wave_tracing(g_rep, g_start.x, g_start.y, g_finish.x, g_finish.y)
@@ -438,7 +437,7 @@ func generate_kruskal(dim):
 	var random_wall_index = 0
 	while locations > 1:
 		var progress = 80 - locations / (dim.x * dim.y) * 80 + 20
-		print("generation, completed: ", progress)
+		#print("generation, completed: ", progress)
 		emit_signal("generation_progress", progress)
 		var random_wall = array_for_random_walls[random_wall_index]
 		random_wall_index = random_wall_index + 1
@@ -481,3 +480,9 @@ func get_locations_separated_by_wall(random_wall):
 
 func _on_Maze_generation_progress(progress):
 	$Progress.text = "Progress: " + ceil(progress) as String
+
+func stop():
+	$Player.set_physics_process(false)
+	$Goal.queue_free()
+	$Player.queue_free()
+
