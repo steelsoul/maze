@@ -296,10 +296,10 @@ func put_player(xs, ys):
 
 func put_goal(xf, yf):
 	$Goal.visible = true
-	$Goal.set_collision_enabled()
 	var cellsize = Cell.instance().get_size()
 	var cellsize_2 = cellsize / 2
 	$Goal.position = Vector2(xf * cellsize + cellsize_2, yf * cellsize + cellsize_2)
+	$Goal.set_collision_enabled()
 
 enum PrimaStageAttribute {Inside, Outside, Border}
 
