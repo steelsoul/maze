@@ -4,6 +4,7 @@ export var min_movement_speed = 20
 export var max_movement_speed = 150
 
 var speed = 0
+var is_activated = false
 
 var input_direct = Vector2.ZERO
 
@@ -12,8 +13,15 @@ func _ready():
 
 const gravity_threshold = 0.3
 
-func enable_camera():
+func activate():
 	$Camera2D.current = true
+	is_activated = true
+	speed = 0
+	input_direct = Vector2.ZERO
+
+func deactivate():
+	$Camera2D.current = false
+	is_activated = false
 
 func set_direction_from_keyboard_input(direct_vector):
 	if Input.is_key_pressed(KEY_LEFT):
@@ -31,9 +39,12 @@ func set_direction_from_gravity_sensor(direct_vector):
 	if acc_vec.length() > gravity_threshold:
 		direct_vector = Vector2(acc_vec.x, -acc_vec.y)
 #		direct_vector.y = -1 * direct_vector.y
-	return direct_vector
+	return direct_vector.normalized()
 
 func _physics_process(_delta):
+	if !is_activated:
+		return
+		
 	var direct_vector = Vector2.ZERO
 	
 	direct_vector = set_direction_from_keyboard_input(direct_vector)

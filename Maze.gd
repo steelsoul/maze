@@ -60,15 +60,16 @@ func _on_Button_pressed():
 
 func _on_Goal_reach_goal():
 	print("Hey, you have won! Congrats!!!")
+	$Player.deactivate()
 	emit_signal("on_game_finished")
 
 func _on_Maze_on_generation_done():
-	$Progress.visible = false
+	$CanvasLayer/Progress.visible = false
 	self.visible = false
 	load_repo(g_rep)
 	put_player(g_start.x, g_start.y)
 	put_goal(g_finish.x, g_finish.y)
-	$Player.enable_camera()
+	$Player.activate()
 	self.visible = true
 
 func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
@@ -489,10 +490,13 @@ func get_locations_separated_by_wall(random_wall):
 		return [Vector2(pos.x - 1, pos.y), Vector2(pos.x, pos.y)]
 
 func _on_Maze_generation_progress(progress):
-	$Progress.text = "Progress: " + ceil(progress) as String
+	$CanvasLayer/Progress.text = "Progress: " + ceil(progress) as String
 
 func stop():
 	$Player.set_physics_process(false)
 	$Goal.queue_free()
 	$Player.queue_free()
 
+func _input(event):
+	if event.is_action_released("cheat"):
+		$CanvasLayer/Button.visible = true

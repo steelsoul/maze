@@ -1,6 +1,6 @@
 extends Node2D
 
-export (int, 10, 50) var min_slider_value = 10
+export (int, 3, 10) var min_slider_value = 3
 export (int, 10, 50) var max_slider_value = 50
 
 func _ready():
