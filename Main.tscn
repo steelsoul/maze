@@ -15,4 +15,9 @@ Maze = ExtResource( 2 )
 [node name="Configuration" parent="CanvasLayer" instance=ExtResource( 3 )]
 position = Vector2( 211.569, 191.607 )
 scale = Vector2( 3, 3 )
+
+[node name="CleanupTimer" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true
 [connection signal="configuration_done" from="CanvasLayer/Configuration" to="." method="_on_Configuration_configuration_done"]
+[connection signal="timeout" from="CleanupTimer" to="." method="_on_CleanupTimer_timeout"]
