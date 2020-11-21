@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Wall.gd" type="Script" id=1]
-[ext_resource path="res://art/brick_wall.jpeg" type="Texture" id=2]
+[ext_resource path="res://art/brick_wall.jpeg" type="Texture" id=1]
+[ext_resource path="res://Code/Wall.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 70, 10 )
@@ -11,7 +11,7 @@ extents = Vector2( 10, 70 )
 
 [node name="Cell" type="Node2D"]
 scale = Vector2( 0.4, 0.4 )
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -19,7 +19,7 @@ __meta__ = {
 [node name="Corner" type="Sprite" parent="."]
 position = Vector2( 10, 10 )
 rotation = 1.5708
-texture = ExtResource( 2 )
+texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 20, 20 )
 __meta__ = {
@@ -42,7 +42,7 @@ __meta__ = {
 
 [node name="Up" type="Sprite" parent="UpBody"]
 position = Vector2( 70, 10 )
-texture = ExtResource( 2 )
+texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 140, 20 )
 __meta__ = {
@@ -66,7 +66,7 @@ __meta__ = {
 [node name="Left" type="Sprite" parent="LeftBody"]
 position = Vector2( 10, 70 )
 rotation = 1.5708
-texture = ExtResource( 2 )
+texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 140, 20 )
 __meta__ = {
