@@ -5,8 +5,7 @@ export (PackedScene) var Ball
 
 enum Dir {Left, Right, Down, Up}
 enum Algorythm {Prima, Kruskal}
-var buffer = PoolStringArray()
-#var g_dim = Vector2(0, 0)
+
 var g_alg = Algorythm.Prima
 var g_start = Vector2(0, 0)
 var g_finish = Vector2(0,0)
@@ -17,11 +16,7 @@ signal on_generation_done
 signal generation_progress
 signal on_game_finished
 
-func _ready():
-	pass
-
-#func set_dimension(dim):
-#	g_dim = dim
+onready var CSVHelper = preload("res://Code/CSVHelper.gd")
 
 func set_algorythm(alg):
 	if alg == "kruskal":
@@ -166,18 +161,17 @@ func load_repo(repo):
 	finalize_rep(width, height)
 
 func read_file(file_name):
-	var file = File.new()
-	file.open("res://" + file_name, File.READ)
-	print("e: ", file.get_error(), ", available: ", file.is_open())
-	var w = read_next_byte_from_csv(file)
-	var h = read_next_byte_from_csv(file)
+	var file_reader = CSVHelper.new(file_name)
+
+	var w = file_reader.read_next_byte_from_csv()
+	var h = file_reader.read_next_byte_from_csv()
 	print("w: ", w, ", h: ", h)
 	var repo = make_array_of_cells(w,h)
 	var x = 0
 	var y = 0
 	while (x+1)*(y+1) != w*h:
-		var up = read_next_byte_from_csv(file)
-		var left = read_next_byte_from_csv(file)
+		var up = file_reader.read_next_byte_from_csv()
+		var left = file_reader.read_next_byte_from_csv()
 		if x == w:
 			y = y + 1
 			x = 0
@@ -187,29 +181,24 @@ func read_file(file_name):
 	return [w, h, repo]
 
 func write_file(file_name, repo):
-	var file = File.new()
-	file.open("res://" + file_name, File.WRITE)
-	var w = repo.size()
-	var h = repo[0].size()
-	file.store_8(w)
-	file.store_8(h)
+	var file_reader = CSVHelper.new(file_name, File.WRITE)
+	var w = repo[0]
+	var h = repo[1]
+	file_reader.store_byte(w)
+	file_reader.store_byte(h)
 	var x = 0
 	var y = 0
-	while (x + 1)*(y + 1) != w*h:
-		var cell = repo[x][y]
-		file.store_8(cell.is_top())
-		file.store_8(cell.is_left())
+	var goal_rep = repo[2]
+	while true:
+		var cell = goal_rep[x][y]
+		file_reader.store_byte(cell.is_top())
+		file_reader.store_byte(cell.is_left())
 		x = x + 1
 		if x == w:
 			x = 0
 			y = y + 1
-
-func read_next_byte_from_csv(file):
-	if buffer.size() == 0 || buffer.size() == 1:
-		buffer = file.get_csv_line()
-	var result = buffer[0] as int
-	buffer.remove(0)
-	return result
+			if y == h:
+				break
 
 func create_rep(maze):
 	var w = maze[0]
@@ -500,3 +489,8 @@ func stop():
 func _input(event):
 	if event.is_action_released("cheat"):
 		$CanvasLayer/Button.visible = true
+
+
+func _on_Button2_pressed():
+	var file_name = "game.sav"
+	write_file(file_name, g_rep)
