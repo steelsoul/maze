@@ -1,5 +1,7 @@
 extends Node2D
 
+class_name Configuration
+
 signal configuration_done
 
 func _on_Button_pressed():

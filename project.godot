@@ -13,9 +13,21 @@ _global_script_classes=[ {
 "class": "CSVHelper",
 "language": "GDScript",
 "path": "res://Code/CSVHelper.gd"
+}, {
+"base": "Node2D",
+"class": "Configuration",
+"language": "GDScript",
+"path": "res://Code/Configuration.gd"
+}, {
+"base": "Reference",
+"class": "MazeGenerator",
+"language": "GDScript",
+"path": "res://Code/MazeGenerator.gd"
 } ]
 _global_script_class_icons={
-"CSVHelper": ""
+"CSVHelper": "",
+"Configuration": "",
+"MazeGenerator": ""
 }
 
 [application]

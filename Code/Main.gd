@@ -2,24 +2,21 @@ extends Node2D
 
 export (PackedScene) var Maze
 
+onready var MazeGenerator = load("res://Code/MazeGenerator.gd")
+var maze_generator: MazeGenerator = null
+onready var configuration_ = $CanvasLayer/Configuration
+
 func _on_Configuration_configuration_done():
-	var config = $CanvasLayer/Configuration
-	
-	config.visible = false
-	var maze = Maze.instance()
+	configuration_.hide()
+	maze_generator = MazeGenerator.new(configuration_.get_dim())
+	maze_generator.connect("generation_done", self, "_on_Generation_done")
+	maze_generator.generate_kruskal()
 
-	maze.set_algorythm(config.get_algorythm())
-	$node.add_child(maze)
-	maze.connect("on_game_finished", self, "on_finish")
-	maze.start_generation(config.get_dim())
+func _on_Generation_done():
+	maze_generator.disconnect("generation_done", self, "_on_Generation_done")
+	$Maze.setup_maze(maze_generator.get_maze())
+	maze_generator = null
+	$Maze.show()
 
-func on_finish():
-	$CleanupTimer.start()
-
-func _on_CleanupTimer_timeout():
-	var maze = $node.get_child(0)
-	maze.stop()
-	maze.disconnect("on_game_finished", self, "on_finish")
-	$node.call_deferred("remove_child", maze)
-	maze.queue_free()
-	$CanvasLayer/Configuration.visible = true
+func _on_Maze_on_game_finished():
+	configuration_.show()
