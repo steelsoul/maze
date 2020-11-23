@@ -1,6 +1,7 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://art/ball_sprite.png" type="Texture" id=1]
+[ext_resource path="res://arts/ball_sprite.png" type="Texture" id=1]
+
 
 [node name="Ball" type="Node2D"]
 scale = Vector2( 0.3, 0.3 )

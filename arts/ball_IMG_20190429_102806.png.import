@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/target.png-eda7362ee5ba8907ec2b67f6c10c7d2c.stex"
+path="res://.import/ball_IMG_20190429_102806.png-65f3a1e1a74ad2460eeb49a992e2bb6e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/target.png"
-dest_files=[ "res://.import/target.png-eda7362ee5ba8907ec2b67f6c10c7d2c.stex" ]
+source_file="res://arts/ball_IMG_20190429_102806.png"
+dest_files=[ "res://.import/ball_IMG_20190429_102806.png-65f3a1e1a74ad2460eeb49a992e2bb6e.stex" ]
 
 [params]
 

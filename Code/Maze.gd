@@ -1,6 +1,6 @@
 extends Node2D
 
-var MazeGenerator = preload("res://Code/MazeGenerator.gd")
+var MazeGenerator = preload("res://code/MazeGenerator.gd")
 
 func _ready():
 #	MazeGenerator.new(Vector2(10, 10)).generate_prima()
@@ -12,7 +12,7 @@ func setup_maze(maze):
 	for y in range(dim.y):
 		var s = ""
 		for x in range(dim.x):
-			match rep[x][y]:
+			match rep[MazeGenerator.get_index_from_coord(Vector2(x,y), dim)]:
 				MazeGenerator.CellKind.OPEN:
 					s += " "
 					pass

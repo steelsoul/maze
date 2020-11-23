@@ -1,8 +1,13 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Code/Configuration.gd" type="Script" id=1]
-[ext_resource path="res://Res/button_group.tres" type="ButtonGroup" id=2]
-[ext_resource path="res://Scenes/TextWithSlider.tscn" type="PackedScene" id=3]
+[ext_resource path="res://code/Configuration.gd" type="Script" id=1]
+[ext_resource path="res://resource/button_group.tres" type="ButtonGroup" id=2]
+[ext_resource path="res://scenes/TextWithSlider.tscn" type="PackedScene" id=3]
+
+
+
+
+
 
 [node name="Configuration" type="Node2D"]
 script = ExtResource( 1 )

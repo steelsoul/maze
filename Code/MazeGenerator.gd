@@ -16,14 +16,7 @@ func _init(dimensions: Vector2):
 	rep_.clear()
 	marks_array_.clear()
 	dimension_ = dimensions
-
-	for x in range(dimension_.x):
-#		emit_signal("generation_progress", progress_value)
-		rep_.append([])
-		var y = 0
-		while y < dimension_.y:
-			rep_[x].append(0)
-			y = y + 1
+	rep_.resize(dimension_.x * dimension_.y)
 
 func generate_prima():
 	fill_maze_with_walls()
@@ -50,7 +43,7 @@ func generate_prima():
 			var random_location_index = border_result[random_index]
 			attribute_array[random_location_index] = PrimaStageAttribute.INSIDE
 			change_attribute_for_neighbours(PrimaStageAttribute.BORDER, PrimaStageAttribute.OUTSIDE, random_location_index, attribute_array)
-			var dest_neighbour = get_random_destination_neighbour(random_location_index, dimension_, attribute_array)
+			var dest_neighbour = get_random_destination_neighbour(random_location_index, attribute_array)
 			break_the_wall(get_coordinate_from_index(random_location_index, dimension_), dest_neighbour)
 
 	emit_signal("generation_done")
@@ -58,18 +51,18 @@ func generate_prima():
 func fill_maze_with_walls():
 	for x in range(0, dimension_.x):
 		for y in range(0, dimension_.y):
-			rep_[x][y] = CellKind.CLOSE
+			rep_[translate2index(x,y)] = CellKind.CLOSE
 			
 func change_attribute_for_neighbours(new_attribute, required_attribute, index, attribute_array):
 	var location = get_coordinate_from_index(index, dimension_)
 	for x in [location.x-1, location.x+1]:
 		if x >= 0 and x < dimension_.x:
-			var new_index = get_index_from_coord(Vector2(x, location.y), dimension_)
+			var new_index = translate2index(x, location.y)
 			if attribute_array[new_index] == required_attribute:
 				attribute_array[new_index] = new_attribute
 	for y in [location.y-1, location.y+1]:
 		if y >= 0 and y < dimension_.y:
-			var new_index = get_index_from_coord(Vector2(location.x, y), dimension_)
+			var new_index = translate2index(location.x, y)
 			if attribute_array[new_index] == required_attribute:
 				attribute_array[new_index] = new_attribute
 
@@ -79,8 +72,14 @@ func get_coordinate_from_index(index, dim):
 	var y = (index / width) as int
 	return Vector2(x,y)
 
-func get_index_from_coord(coord, dim):
+static func get_index_from_coord(coord, dim):
 	return coord.y * (dim.x as int) + coord.x
+
+func translate2index(x, y):
+	return get_index_from_coord(Vector2(x,y), dimension_)
+
+func translate2coord(index):
+	return get_coordinate_from_index(index, dimension_)
 	
 func has_border(attribute_array):
 	var available_indexes = []
@@ -89,33 +88,33 @@ func has_border(attribute_array):
 			available_indexes.append(i)
 	return available_indexes
 
-func get_random_destination_neighbour(location_index, dim, attribute_array):
+func get_random_destination_neighbour(location_index, attribute_array):
 	var matching_array_with_inside = []
-	var current_coordinate = get_coordinate_from_index(location_index, dim)
+	var current_coordinate = translate2coord(location_index)
 	for x in [current_coordinate.x - 1, current_coordinate.x + 1]:
-		if x >= 0 and x < dim.x:
-			var local_index = get_index_from_coord(Vector2(x, current_coordinate.y), dim)
+		if x >= 0 and x < dimension_.x:
+			var local_index = translate2index(x, current_coordinate.y)
 			if attribute_array[local_index] == PrimaStageAttribute.INSIDE:
 				matching_array_with_inside.append(local_index)
 	for y in [current_coordinate.y - 1, current_coordinate.y + 1]:
-		if y >= 0 and y < dim.y:
-			var local_index = get_index_from_coord(Vector2(current_coordinate.x, y), dim)
+		if y >= 0 and y < dimension_.y:
+			var local_index = translate2index(current_coordinate.x, y)
 			if attribute_array[local_index] == PrimaStageAttribute.INSIDE:
 				matching_array_with_inside.append(local_index)
 	var random_neighbour_index = randi() % matching_array_with_inside.size()
-	var dest_coordinate = get_coordinate_from_index(matching_array_with_inside[random_neighbour_index], dim)
+	var dest_coordinate = translate2coord(matching_array_with_inside[random_neighbour_index])
 	return dest_coordinate
 	
 func break_the_wall(current, dest):
 	print("bw: ", current, " to ", dest)
 	if current.x < dest.x:
-		rep_[dest.x][dest.y] &= 1
+		rep_[translate2index(dest.x, dest.y)] &= 2
 	elif current.x > dest.x:
-		rep_[current.x][current.y] &= 1
+		rep_[translate2index(current.x,current.y)] &= 2
 	elif current.y < dest.y:
-		rep_[dest.x][dest.y] &= 2
+		rep_[translate2index(dest.x, dest.y)] &= 1
 	else:
-		rep_[current.x][current.y] &= 2
+		rep_[translate2index(current.x,current.y)] &= 1
 
 func generate_kruskal():
 	var width = dimension_.x
@@ -167,7 +166,7 @@ func has_path(from, to):
 func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 	init_marks()
 	var n_iter = 1
-	marks_array_[xs][ys] = n_iter
+	marks_array_[translate2index(xs,ys)] = n_iter
 
 	while true:
 		var x = 0
@@ -175,7 +174,7 @@ func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 		while x < dimension_.x:
 			var y = 0
 			while y < dimension_.y:
-				if marks_array_[x][y] == n_iter:
+				if marks_array_[translate2index(x,y)] == n_iter:
 					for dir in Dir.values():
 						if can_go(repo, x, y, dir, marks_array_, 0):
 #							print("can go ", describe(dir),  " from (", x, ",", y, ") on iter ", n_iter)
@@ -189,10 +188,8 @@ func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 		if no_further_steps: return false
 
 func init_marks():
-	for x in range(dimension_.x):
-		marks_array_.append([])
-		for y in range(dimension_.y):
-			marks_array_[x].append(0)
+	marks_array_.clear()
+	marks_array_.resize(dimension_.x * dimension_.y)
 
 func get_result_path():
 	return marks_array_
@@ -211,10 +208,12 @@ func can_go(rep, x, y, dir, marks_array, n_iter):
 			return y < h-1 && !is_top(x,y+1) && marks_array[x][y+1] == n_iter
 
 func is_left(x, y):
-	return rep_[x][y] == CellKind.HAS_LEFT || rep_[x][y] == CellKind.CLOSE
+	var idx = translate2index(x,y)
+	return rep_[idx] == CellKind.HAS_LEFT || rep_[idx] == CellKind.CLOSE
 
 func is_top(x, y):
-	return rep_[x][y] == CellKind.HAS_UP || rep_[x][y] == CellKind.CLOSE
+	var idx = translate2index(x,y)
+	return rep_[idx] == CellKind.HAS_UP || rep_[idx] == CellKind.CLOSE
 
 func mark_neighbour(rep, x, y, dir, n_iter):
 	match dir:
