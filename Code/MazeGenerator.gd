@@ -106,7 +106,7 @@ func get_random_destination_neighbour(location_index, attribute_array):
 	return dest_coordinate
 	
 func break_the_wall(current, dest):
-	print("bw: ", current, " to ", dest)
+	#print("bw: ", current, " to ", dest)
 	if current.x < dest.x:
 		rep_[translate2index(dest.x, dest.y)] &= 2
 	elif current.x > dest.x:
@@ -190,6 +190,8 @@ func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
 func init_marks():
 	marks_array_.clear()
 	marks_array_.resize(dimension_.x * dimension_.y)
+	for i in marks_array_.size():
+		marks_array_[i] = 0
 
 func get_result_path():
 	return marks_array_
@@ -199,13 +201,13 @@ func can_go(rep, x, y, dir, marks_array, n_iter):
 	var h = dimension_.y
 	match dir:
 		Dir.LEFT:
-			return x > 0 && !is_left(x,y) && marks_array[x-1][y] == n_iter
+			return x > 0 && !is_left(x,y) && marks_array[translate2index(x-1,y)] == n_iter
 		Dir.RIGHT:
-			return x < w-1 && !is_left(x+1,y) && marks_array[x+1][y] == n_iter
+			return x < w-1 && !is_left(x+1,y) && marks_array[translate2index(x+1,y)] == n_iter
 		Dir.UP:
-			return y > 0 && !is_top(x,y) && marks_array[x][y-1] == n_iter
+			return y > 0 && !is_top(x,y) && marks_array[translate2index(x,y-1)] == n_iter
 		Dir.DOWN:
-			return y < h-1 && !is_top(x,y+1) && marks_array[x][y+1] == n_iter
+			return y < h-1 && !is_top(x,y+1) && marks_array[translate2index(x,y+1)] == n_iter
 
 func is_left(x, y):
 	var idx = translate2index(x,y)
@@ -217,10 +219,10 @@ func is_top(x, y):
 
 func mark_neighbour(rep, x, y, dir, n_iter):
 	match dir:
-		Dir.LEFT:  rep[x-1][y] = n_iter
-		Dir.RIGHT: rep[x+1][y] = n_iter
-		Dir.UP:    rep[x][y-1] = n_iter
-		Dir.DOWN:  rep[x][y+1] = n_iter
+		Dir.LEFT:  rep[translate2index(x-1,y)] = n_iter
+		Dir.RIGHT: rep[translate2index(x+1,y)] = n_iter
+		Dir.UP:    rep[translate2index(x,y-1)] = n_iter
+		Dir.DOWN:  rep[translate2index(x,y+1)] = n_iter
 
 func check_finish(x, y, xf, yf, dir):
 	var xn = x

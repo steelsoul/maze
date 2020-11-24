@@ -1,8 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://code/TextWithSlider.gd" type="Script" id=1]
-
-
+[ext_resource path="res://resource/8bit_wonder_font.tres" type="DynamicFont" id=2]
 
 [node name="TextWithSlider" type="Node2D"]
 script = ExtResource( 1 )
@@ -16,25 +15,26 @@ __meta__ = {
 }
 
 [node name="DigitContainer" type="HBoxContainer" parent="HBoxContainer"]
-margin_right = 20.0
+margin_right = 33.0
 margin_bottom = 16.0
+rect_min_size = Vector2( 33, 0 )
 size_flags_horizontal = 0
 size_flags_stretch_ratio = 0.0
 
 [node name="Label" type="Label" parent="HBoxContainer/DigitContainer"]
-margin_top = 2.0
-margin_right = 20.0
+margin_right = 32.0
 margin_bottom = 16.0
 grow_horizontal = 0
 grow_vertical = 0
 rect_min_size = Vector2( 20, 0 )
 size_flags_horizontal = 9
 size_flags_vertical = 14
+custom_fonts/font = ExtResource( 2 )
 text = "35"
 
 [node name="HSlider" type="HSlider" parent="HBoxContainer"]
-margin_left = 24.0
-margin_right = 174.0
+margin_left = 37.0
+margin_right = 187.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 150, 0 )
 size_flags_horizontal = 0

@@ -2,17 +2,17 @@ extends "res://addons/gut/test.gd"
 
 var MazeGeneratorClass = load("res://code/MazeGenerator.gd")
 
-func before_all():
-	gut.p("Runs once before all tests")
-
-func before_each():
-	gut.p("Runs before each test.")
-
-func after_each():
-	gut.p("Runs after each test.")
-
-func after_all():
-	gut.p("Runs once after all tests")
+#func before_all():
+#	gut.p("Runs once before all tests")
+#
+#func before_each():
+#	gut.p("Runs before each test.")
+#
+#func after_each():
+#	gut.p("Runs after each test.")
+#
+#func after_all():
+#	gut.p("Runs once after all tests")
 
 func test_MazeGenerator_init():
 	var mg = MazeGenerator.new(Vector2(5, 3))
@@ -33,3 +33,12 @@ func test_MazeGenerator_break_the_wall():
 	assert_eq(mg.rep_[mg.translate2index(2,1)], 0)
 	mg.break_the_wall(Vector2(1, 2), Vector2(1,1))
 	assert_eq(mg.rep_[mg.translate2index(1,2)], 0)
+
+func test_MazeGenerator_init_marks():
+	var mg = MazeGenerator.new(Vector2(3, 3))
+	mg.marks_array_ = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	mg.init_marks()
+	var sum = 0
+	for x in mg.marks_array_:
+		sum += x
+	assert_eq(sum, 0)
