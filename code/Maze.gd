@@ -27,10 +27,12 @@ func setup_maze(maze):
 	$Map.set_cellv(Vector2(dim.x, dim.y), 2)
 
 func check_corner_case_condition(rep, dim, x, y):
-	if (x >= dim.x-1) || (y >= dim.y-1): return false
-	var id1 = MazeGenerator.get_index_from_coord(Vector2(x,y+1), dim)
+	if (x > dim.x-1) || (y > dim.y-1): return false
 	var id2 = MazeGenerator.get_index_from_coord(Vector2(x+1,y), dim)
-	return rep[id1] | rep[id2] == 3
+	if rep[id2] != MazeGenerator.CellKind.HAS_LEFT && rep[id2] != MazeGenerator.CellKind.CLOSE: return false
+	var id1 = MazeGenerator.get_index_from_coord(Vector2(x,y+1), dim)
+	# first shall be UP otherwords be 1X
+	return rep[id1] & 2 == 2
 
 func setup_game(player_pos: Vector2, goal_pos: Vector2):
 	var cell_size_2 = $Map.cell_size / 2
