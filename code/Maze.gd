@@ -4,6 +4,8 @@ signal game_over
  
 var MazeGenerator = preload("res://code/MazeGenerator.gd")
 
+enum CellType {CLOSE, LEFT, UP, ADDITIONAL}
+
 func setup_maze(maze):
 	var dim = maze[0]
 	var rep = maze[1]
@@ -14,12 +16,16 @@ func setup_maze(maze):
 					pass
 				MazeGenerator.CellKind.CLOSE:
 					$Map.set_cellv(Vector2(x,y), 3)
+					add_occluder_to_shapes(x,y,CellType.CLOSE)
 				MazeGenerator.CellKind.HAS_UP:
 					$Map.set_cellv(Vector2(x,y), 0)
+					add_occluder_to_shapes(x,y,CellType.UP)
 				MazeGenerator.CellKind.HAS_LEFT:
 					$Map.set_cellv(Vector2(x,y), 1)
+					add_occluder_to_shapes(x,y,CellType.LEFT)
 			if check_corner_case_condition(rep, dim, x, y):
 				$Map.set_cellv(Vector2(x+1, y+1), 2)
+				add_occluder_to_shapes(x+1,y+1,CellType.ADDITIONAL)
 	for i in range(dim.x):
 		$Map.set_cellv(Vector2(i, dim.y), 0)
 	for i in range(dim.y):
@@ -27,7 +33,7 @@ func setup_maze(maze):
 	$Map.set_cellv(Vector2(dim.x, dim.y), 2)
 
 func check_corner_case_condition(rep, dim, x, y):
-	if (x > dim.x-1) || (y > dim.y-1): return false
+	if (x >= dim.x-1) || (y >= dim.y-1): return false
 	var id2 = MazeGenerator.get_index_from_coord(Vector2(x+1,y), dim)
 	if rep[id2] != MazeGenerator.CellKind.HAS_LEFT && rep[id2] != MazeGenerator.CellKind.CLOSE: return false
 	var id1 = MazeGenerator.get_index_from_coord(Vector2(x,y+1), dim)
@@ -46,6 +52,8 @@ func setup_game(player_pos: Vector2, goal_pos: Vector2):
 	$Player.activate()
 
 func cleanup():
+	for x in $ShadowCasters.get_children():
+		$ShadowCasters.call_deferred("remove_child", x)
 	$Player.hide()
 	$Goal.hide()
 	$Map.clear()
@@ -53,3 +61,28 @@ func cleanup():
 
 func _on_Goal_reach_goal():
 	emit_signal("game_over")
+
+func add_occluder_to_shapes(x, y, cellkind):
+	#if x == 0 || y == 0: return
+	var cell_position = $Map.map_to_world(Vector2(x,y), false) * $Map.scale
+	var light_occluder = LightOccluder2D.new()
+	var poly = OccluderPolygon2D.new()
+	poly.closed = true
+	poly.cull_mode = OccluderPolygon2D.CULL_CLOCKWISE
+	var points_array = []
+	if cellkind == CellType.CLOSE:
+		points_array = [Vector2(0,0), Vector2(75,0), Vector2(75,15), Vector2(15,15),
+		Vector2(15,75), Vector2(0, 75)]
+	elif cellkind == CellType.UP:
+		points_array = [Vector2(0,0), Vector2(75,0), Vector2(75,15), Vector2(0,15)]
+	elif cellkind == CellType.LEFT:
+		points_array = [Vector2(0,0), Vector2(15,0), Vector2(15,75), Vector2(0,75)]
+	elif cellkind == CellType.ADDITIONAL:
+		points_array = [Vector2(0,0), Vector2(15,0), Vector2(15,15), Vector2(0,15)]
+	for i in range(points_array.size()):
+		points_array[i] += cell_position
+	poly.set_polygon(points_array)
+	light_occluder.set_occluder_polygon(poly)
+	#$ShadowCasters.call_deferred("add_child", light_occluder)
+	$ShadowCasters.add_child(light_occluder)
+

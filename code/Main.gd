@@ -25,14 +25,7 @@ func generator_thread(data):
 
 func _on_Generation_done():
 	maze_generator.disconnect("generation_done", self, "_on_Generation_done")
-	$Maze.setup_maze(maze_generator.get_maze())
-	thread.wait_to_finish()
-	thread = null
-	maze_generator = null
-	$CanvasLayer/InProgressLabel.hide()
-	var dimensions = configuration_.get_dim() - Vector2(1,1)
-	$Maze.setup_game(Vector2(0, 0), dimensions)
-	$Maze.show()
+	$Timer.start()
 
 func _on_Maze_on_game_finished():
 	configuration_.show()
@@ -45,3 +38,13 @@ func _on_Maze_game_over():
 	$Maze.hide()
 	$Maze.cleanup()
 	configuration_.show()
+
+func _on_Timer_timeout():
+	$Maze.setup_maze(maze_generator.get_maze())
+	thread.wait_to_finish()
+	thread = null
+	maze_generator = null
+	$CanvasLayer/InProgressLabel.hide()
+	var dimensions = configuration_.get_dim() - Vector2(1,1)
+	$Maze.setup_game(Vector2(0, 0), dimensions)
+	$Maze.show()

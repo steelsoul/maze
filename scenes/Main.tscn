@@ -36,5 +36,10 @@ text = "GENERATING .."
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.035
+one_shot = true
 [connection signal="game_over" from="Maze" to="." method="_on_Maze_game_over"]
 [connection signal="configuration_done" from="CanvasLayer/Configuration" to="." method="_on_Configuration_configuration_done"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
