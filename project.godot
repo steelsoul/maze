@@ -37,6 +37,7 @@ run/main_scene="res://scenes/Main.tscn"
 boot_splash/image="res://arts/ball_sprite.png"
 boot_splash/fullsize=false
 boot_splash/use_filter=false
+boot_splash/bg_color=Color( 0.196078, 0.231373, 0.235294, 1 )
 config/icon="res://arts/maze.png"
 
 [display]
@@ -61,5 +62,5 @@ cheat={
 
 quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
-environment/default_clear_color=Color( 0.054902, 0.0627451, 0.0627451, 1 )
+environment/default_clear_color=Color( 0.180392, 0.192157, 0.227451, 1 )
 environment/default_environment="res://resource/default_env.tres"

@@ -26,9 +26,10 @@ __meta__ = {
 limit_smoothed = true
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
-smoothing_enabled = true
+smoothing_speed = 10.0
 
 [node name="Light2D" type="Light2D" parent="."]
+visible = false
 texture = ExtResource( 3 )
 range_z_min = -512
 range_z_max = 512

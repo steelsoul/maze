@@ -8,8 +8,7 @@
 [node name="Configuration" type="Node2D"]
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
+"_edit_group_": true
 }
 
 [node name="Label" type="Label" parent="."]
@@ -53,9 +52,9 @@ text = "Kruscal"
 [node name="LabelWidth" type="Label" parent="."]
 anchor_top = 0.5
 anchor_bottom = 0.5
-margin_top = 18.0
-margin_right = 42.0
-margin_bottom = 29.0
+margin_top = 25.0
+margin_right = 80.0
+margin_bottom = 41.0
 custom_fonts/font = ExtResource( 4 )
 text = "Width:"
 __meta__ = {
@@ -68,9 +67,9 @@ position = Vector2( 203.143, 0.327969 )
 [node name="LabelHeight" type="Label" parent="."]
 anchor_top = 0.5
 anchor_bottom = 0.5
-margin_top = 36.6415
-margin_right = 46.0
-margin_bottom = 50.6415
+margin_top = 48.6415
+margin_right = 88.0
+margin_bottom = 64.6415
 custom_fonts/font = ExtResource( 4 )
 text = "Height:"
 __meta__ = {
@@ -82,9 +81,9 @@ position = Vector2( 203.497, -2.02594 )
 
 [node name="Button" type="Button" parent="."]
 margin_left = 159.35
-margin_top = 63.5638
+margin_top = 79.5638
 margin_right = 251.35
-margin_bottom = 85.5638
+margin_bottom = 101.564
 rect_scale = Vector2( 1.6, 1.4 )
 custom_fonts/font = ExtResource( 4 )
 text = "Ready"

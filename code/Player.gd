@@ -9,6 +9,7 @@ func activate():
 func deactivate():
 	$Camera2D.current = false
 	is_activated = false
+	$Light2D.hide()
 
 func set_direction_from_keyboard_input():
 	var direct_vector = Vector2.ZERO
@@ -38,3 +39,6 @@ func _physics_process(_delta):
 	
 	if direct_vector.length_squared() > 0.25:
 		move_and_collide(direct_vector)
+
+func turn_light_on():
+	$Light2D.show()

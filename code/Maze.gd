@@ -11,6 +11,7 @@ func setup_maze(maze):
 	var rep = maze[1]
 	for y in range(dim.y):
 		for x in range(dim.x):
+			$Floor.set_cellv(Vector2(x,y), 1)
 			match rep[MazeGenerator.get_index_from_coord(Vector2(x,y), dim)]:
 				MazeGenerator.CellKind.OPEN:
 					pass
@@ -28,8 +29,10 @@ func setup_maze(maze):
 				add_occluder_to_shapes(x+1,y+1,CellType.ADDITIONAL)
 	for i in range(dim.x):
 		$Map.set_cellv(Vector2(i, dim.y), 0)
+		add_occluder_to_shapes(i, dim.y, CellType.UP)
 	for i in range(dim.y):
 		$Map.set_cellv(Vector2(dim.x, i), 1)
+		add_occluder_to_shapes(dim.x, i, CellType.LEFT)
 	$Map.set_cellv(Vector2(dim.x, dim.y), 2)
 
 func check_corner_case_condition(rep, dim, x, y):
@@ -63,12 +66,11 @@ func _on_Goal_reach_goal():
 	emit_signal("game_over")
 
 func add_occluder_to_shapes(x, y, cellkind):
-	#if x == 0 || y == 0: return
 	var cell_position = $Map.map_to_world(Vector2(x,y), false) * $Map.scale
 	var light_occluder = LightOccluder2D.new()
 	var poly = OccluderPolygon2D.new()
 	poly.closed = true
-	poly.cull_mode = OccluderPolygon2D.CULL_CLOCKWISE
+	poly.cull_mode = OccluderPolygon2D.CULL_DISABLED
 	var points_array = []
 	if cellkind == CellType.CLOSE:
 		points_array = [Vector2(0,0), Vector2(75,0), Vector2(75,15), Vector2(15,15),
@@ -86,3 +88,6 @@ func add_occluder_to_shapes(x, y, cellkind):
 	#$ShadowCasters.call_deferred("add_child", light_occluder)
 	$ShadowCasters.add_child(light_occluder)
 
+func set_night_mode():
+	$CanvasModulate.show()
+	$ShadowCasters.show()
