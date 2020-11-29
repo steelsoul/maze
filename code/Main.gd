@@ -45,6 +45,7 @@ func _on_Timer_timeout():
 	thread = null
 	maze_generator = null
 	$CanvasLayer/InProgressLabel.hide()
-	var dimensions = configuration_.get_dim() - Vector2(1,1)
-	$Maze.setup_game(Vector2(0, 0), dimensions)
+	var start_point = Vector2.ZERO
+	var goal_point = configuration_.get_dim() - Vector2(1,1)
+	$Maze.setup_game(start_point, goal_point)
 	$Maze.show()

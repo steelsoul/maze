@@ -275,10 +275,6 @@ color = Color( 0.156863, 0.156863, 0.156863, 1 )
 
 [node name="ShadowCasters" type="Node2D" parent="."]
 visible = false
-
-[node name="Timer" type="Timer" parent="."]
-autostart = true
 [connection signal="reach_goal" from="Goal" to="." method="_on_Goal_reach_goal"]
 [connection signal="pressed" from="CanvasLayer/Button" to="." method="_on_Button_pressed"]
 [connection signal="pressed" from="CanvasLayer/Button2" to="." method="_on_Button2_pressed"]
-[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

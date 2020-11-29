@@ -60,7 +60,6 @@ cheat={
 
 [rendering]
 
-quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 environment/default_clear_color=Color( 0.180392, 0.192157, 0.227451, 1 )
 environment/default_environment="res://resource/default_env.tres"
