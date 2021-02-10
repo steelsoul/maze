@@ -19,7 +19,7 @@ visible = false
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Configuration" parent="CanvasLayer" instance=ExtResource( 2 )]
-position = Vector2( 309.153, 239.442 )
+position = Vector2( 304.601, 172.983 )
 
 [node name="InProgressLabel" type="Label" parent="CanvasLayer"]
 visible = false

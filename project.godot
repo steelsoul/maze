@@ -19,15 +19,27 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://code/Configuration.gd"
 }, {
+"base": "Node",
+"class": "LevelCreator",
+"language": "GDScript",
+"path": "res://code/Level_create.gd"
+}, {
 "base": "Reference",
 "class": "MazeGenerator",
 "language": "GDScript",
 "path": "res://code/MazeGenerator.gd"
+}, {
+"base": "Node",
+"class": "MazeSolver",
+"language": "GDScript",
+"path": "res://code/MazeSolver.gd"
 } ]
 _global_script_class_icons={
 "CSVHelper": "",
 "Configuration": "",
-"MazeGenerator": ""
+"LevelCreator": "",
+"MazeGenerator": "",
+"MazeSolver": ""
 }
 
 [application]
@@ -61,5 +73,4 @@ cheat={
 [rendering]
 
 vram_compression/import_etc=true
-environment/default_clear_color=Color( 0.180392, 0.192157, 0.227451, 1 )
 environment/default_environment="res://resource/default_env.tres"

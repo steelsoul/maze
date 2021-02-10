@@ -6,15 +6,14 @@ signal generation_done
 
 var dimension_: Vector2
 var rep_ = []
-var marks_array_ = []
+
+var MazeSolver = preload("res://code/MazeSolver.gd")
 
 enum CellKind {OPEN = 0, HAS_LEFT = 1, HAS_UP = 2, CLOSE = 3}
 enum PrimaStageAttribute {INSIDE, OUTSIDE, BORDER}
-enum Dir {LEFT, RIGHT, DOWN, UP}
 
 func _init(dimensions: Vector2):
 	rep_.clear()
-	marks_array_.clear()
 	dimension_ = dimensions
 	rep_.resize(dimension_.x * dimension_.y)
 
@@ -66,7 +65,7 @@ func change_attribute_for_neighbours(new_attribute, required_attribute, index, a
 			if attribute_array[new_index] == required_attribute:
 				attribute_array[new_index] = new_attribute
 
-func get_coordinate_from_index(index, dim):
+static func get_coordinate_from_index(index, dim):
 	var width = dim.x as int
 	var x = (index as int) % width
 	var y = (index / width) as int
@@ -161,78 +160,8 @@ func get_locations_separated_by_wall(random_wall):
 		return [Vector2(pos.x - 1, pos.y), Vector2(pos.x, pos.y)]
 
 func has_path(from, to):
-	return solve_maze_with_wave_tracing(rep_, from.x, from.y, to.x, to.y)
-
-func solve_maze_with_wave_tracing(repo, xs, ys, xf, yf):
-	init_marks()
-	var n_iter = 1
-	marks_array_[translate2index(xs,ys)] = n_iter
-
-	while true:
-		var x = 0
-		var no_further_steps = true
-		while x < dimension_.x:
-			var y = 0
-			while y < dimension_.y:
-				if marks_array_[translate2index(x,y)] == n_iter:
-					for dir in Dir.values():
-						if can_go(repo, x, y, dir, marks_array_, 0):
-#							print("can go ", describe(dir),  " from (", x, ",", y, ") on iter ", n_iter)
-							no_further_steps = false
-							mark_neighbour(marks_array_, x, y, dir, n_iter + 1)
-							if check_finish(x, y, xf, yf, dir) == true:
-								return true
-				y = y + 1
-			x = x + 1
-		n_iter = n_iter + 1
-		if no_further_steps: return false
-
-func init_marks():
-	marks_array_.clear()
-	marks_array_.resize(dimension_.x * dimension_.y)
-	for i in marks_array_.size():
-		marks_array_[i] = 0
-
-func get_result_path():
-	return marks_array_
-
-func can_go(rep, x, y, dir, marks_array, n_iter):
-	var w = dimension_.x
-	var h = dimension_.y
-	match dir:
-		Dir.LEFT:
-			return x > 0 && !is_left(x,y) && marks_array[translate2index(x-1,y)] == n_iter
-		Dir.RIGHT:
-			return x < w-1 && !is_left(x+1,y) && marks_array[translate2index(x+1,y)] == n_iter
-		Dir.UP:
-			return y > 0 && !is_top(x,y) && marks_array[translate2index(x,y-1)] == n_iter
-		Dir.DOWN:
-			return y < h-1 && !is_top(x,y+1) && marks_array[translate2index(x,y+1)] == n_iter
-
-func is_left(x, y):
-	var idx = translate2index(x,y)
-	return rep_[idx] == CellKind.HAS_LEFT || rep_[idx] == CellKind.CLOSE
-
-func is_top(x, y):
-	var idx = translate2index(x,y)
-	return rep_[idx] == CellKind.HAS_UP || rep_[idx] == CellKind.CLOSE
-
-func mark_neighbour(rep, x, y, dir, n_iter):
-	match dir:
-		Dir.LEFT:  rep[translate2index(x-1,y)] = n_iter
-		Dir.RIGHT: rep[translate2index(x+1,y)] = n_iter
-		Dir.UP:    rep[translate2index(x,y-1)] = n_iter
-		Dir.DOWN:  rep[translate2index(x,y+1)] = n_iter
-
-func check_finish(x, y, xf, yf, dir):
-	var xn = x
-	var yn = y
-	match dir:
-		Dir.LEFT:  xn -= 1
-		Dir.RIGHT: xn += 1
-		Dir.UP:    yn -= 1
-		Dir.DOWN:  yn += 1
-	return xf == xn and yf == yn
+	var maze_solver = MazeSolver.new(dimension_, rep_)
+	return maze_solver.solve_maze_with_wave_tracing(from.x, from.y, to.x, to.y)
 
 func get_maze():
 	return [dimension_, rep_]

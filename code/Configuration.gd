@@ -8,10 +8,15 @@ func _on_Button_pressed():
 	emit_signal("configuration_done")
 
 func get_dim():
-	var w = $LabelWidth/TextWithSlider.get_value()
-	var h = $LabelHeight/TextWithSlider.get_value()
+	var lw = $Panel/VBoxContainer/HBoxContainer2/TextWithSlider
+	var w = lw.get_value()
+	var lh = $Panel/VBoxContainer/HBoxContainer3/TextWithSlider
+	var h = lh.get_value()
 	return Vector2(w, h)
 
 func get_algorythm():
-	if $Label/CheckBoxKruscal.pressed: return "kruskal"
+	if $Panel/VBoxContainer/HBoxContainer/CheckBoxKruscal.pressed: return "kruskal"
 	else: return "prima"
+
+func is_night_mode():
+	return $Panel/VBoxContainer/HBoxContainer4/NightModeCB.pressed

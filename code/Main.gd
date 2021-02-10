@@ -47,5 +47,6 @@ func _on_Timer_timeout():
 	$CanvasLayer/InProgressLabel.hide()
 	var start_point = Vector2.ZERO
 	var goal_point = configuration_.get_dim() - Vector2(1,1)
-	$Maze.setup_game(start_point, goal_point)
+	var night_mode = configuration_.is_night_mode()
+	$Maze.setup_game(start_point, goal_point, night_mode)
 	$Maze.show()

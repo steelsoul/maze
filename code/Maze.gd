@@ -43,7 +43,7 @@ func check_corner_case_condition(rep, dim, x, y):
 	# first shall be UP otherwords be 1X
 	return rep[id1] & 2 == 2
 
-func setup_game(player_pos: Vector2, goal_pos: Vector2):
+func setup_game(player_pos: Vector2, goal_pos: Vector2, night_mode = false):
 	var cell_size_2 = $Map.cell_size / 2
 	var const_offset = Vector2(10, 10)
 	$Player.position = ($Map.map_to_world(player_pos, false) + cell_size_2) * $Map.scale + const_offset
@@ -53,6 +53,13 @@ func setup_game(player_pos: Vector2, goal_pos: Vector2):
 	$Player.show()
 	$Goal.show()
 	$Player.activate()
+	if night_mode:
+		$Player.turn_light_on()
+		$CanvasModulate.show()
+		$ShadowCasters.show()
+	else:
+		$CanvasModulate.hide()
+		$ShadowCasters.hide()
 
 func cleanup():
 	for x in $ShadowCasters.get_children():

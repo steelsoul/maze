@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://resource/8bit_wonder_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://code/CustomLabel.gd" type="Script" id=2]
+
+[node name="CustomLabel" type="HBoxContainer"]
+margin_right = 188.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 188, 24 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_top = 4.0
+margin_right = 160.0
+margin_bottom = 20.0
+custom_fonts/font = ExtResource( 1 )
+text = "SOME LABEL"
+
+[node name="CheckBox" type="CheckBox" parent="."]
+margin_left = 164.0
+margin_right = 188.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
