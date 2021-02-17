@@ -10,3 +10,6 @@ func test_MazeSolver_init():
 	for x in ms.marks_array_:
 		sum += x
 	assert_eq(sum, 0)
+
+func read_maze(input):
+	input.find(",")
