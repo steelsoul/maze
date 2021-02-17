@@ -20,3 +20,6 @@ func get_algorythm():
 
 func is_night_mode():
 	return $Panel/VBoxContainer/HBoxContainer4/NightModeCB.pressed
+
+func is_quest_mode():
+	return $Panel/VBoxContainer/HBoxContainer5/QuestModeCB.pressed

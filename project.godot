@@ -33,13 +33,19 @@ _global_script_classes=[ {
 "class": "MazeSolver",
 "language": "GDScript",
 "path": "res://code/MazeSolver.gd"
+}, {
+"base": "Reference",
+"class": "QuestHolder",
+"language": "GDScript",
+"path": "res://code/QuestHolder.gd"
 } ]
 _global_script_class_icons={
 "CSVHelper": "",
 "Configuration": "",
 "LevelCreator": "",
 "MazeGenerator": "",
-"MazeSolver": ""
+"MazeSolver": "",
+"QuestHolder": ""
 }
 
 [application]

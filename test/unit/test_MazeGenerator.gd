@@ -19,7 +19,7 @@ func test_MazeGenerator_init():
 	assert_eq(mg.dimension_, Vector2(5,3), "Check dimension - 5x3")
 	assert_false(mg.rep_.empty(), "Representation isn't empty")
 	assert_eq(mg.rep_.size(), 15, "There are 15 items")
-	assert_true(mg.marks_array_.empty(), "No marks")
+	#assert_true(mg.marks_array_.empty(), "No marks")
 
 func test_MazeGenerator_break_the_wall():
 	var mg = MazeGenerator.new(Vector2(3, 3))
@@ -34,11 +34,4 @@ func test_MazeGenerator_break_the_wall():
 	mg.break_the_wall(Vector2(1, 2), Vector2(1,1))
 	assert_eq(mg.rep_[mg.translate2index(1,2)], 0)
 
-func test_MazeGenerator_init_marks():
-	var mg = MazeGenerator.new(Vector2(3, 3))
-	mg.marks_array_ = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-	mg.init_marks()
-	var sum = 0
-	for x in mg.marks_array_:
-		sum += x
-	assert_eq(sum, 0)
+
