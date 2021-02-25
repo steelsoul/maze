@@ -9,4 +9,7 @@ func test_QuestHolder_init():
 	var qh = QuestHolder.new(dim, rep)
 	assert_eq(qh.rep_, rep, "Check rep")
 	assert_eq(qh.dim_, dim, "Check dim")
+	
+	assert_false(qh.doors_.size() == 0, "Door isn't in place")
+	assert_false(qh.doors_[0] == 0, "Door can't be in the begin")
 	pass

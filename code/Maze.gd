@@ -9,7 +9,7 @@ enum CellType {CLOSE, LEFT, UP, ADDITIONAL}
 func setup_maze(maze):
 	var dim = maze[0]
 	var rep = maze[1]
-	print(rep)
+
 	for y in range(dim.y):
 		for x in range(dim.x):
 			$Floor.set_cellv(Vector2(x,y), 1)
