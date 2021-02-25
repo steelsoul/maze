@@ -12,4 +12,5 @@ func test_QuestHolder_init():
 	
 	assert_false(qh.doors_.size() == 0, "Door isn't in place")
 	assert_false(qh.doors_[0] == 0, "Door can't be in the begin")
-	pass
+	
+	assert_false(qh.keys_.size() == 0, "There must be one key")
