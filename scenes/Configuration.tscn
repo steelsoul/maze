@@ -9,11 +9,11 @@
 
 [sub_resource type="StyleBoxFlat" id=2]
 
+[sub_resource type="StyleBoxFlat" id=3]
+
 [sub_resource type="StyleBoxFlat" id=4]
 
 [sub_resource type="StyleBoxFlat" id=5]
-
-[sub_resource type="StyleBoxFlat" id=3]
 shadow_color = Color( 0.121569, 0.631373, 0.654902, 0.6 )
 
 [node name="Configuration" type="Node2D"]
@@ -129,9 +129,9 @@ margin_left = 197.0
 margin_right = 213.0
 margin_bottom = 16.0
 custom_styles/hover = SubResource( 2 )
-custom_styles/pressed = SubResource( 4 )
-custom_styles/hover_pressed = SubResource( 5 )
-custom_styles/normal = SubResource( 3 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/hover_pressed = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer"]
 margin_top = 180.0
@@ -145,13 +145,13 @@ custom_fonts/font = ExtResource( 4 )
 text = "QUEST MODE"
 
 [node name="QuestModeCB" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer5"]
-margin_left = 164.0
-margin_right = 180.0
+margin_left = 197.0
+margin_right = 213.0
 margin_bottom = 16.0
 custom_styles/hover = SubResource( 2 )
-custom_styles/pressed = SubResource( 4 )
-custom_styles/hover_pressed = SubResource( 5 )
-custom_styles/normal = SubResource( 3 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/hover_pressed = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
 
 [node name="Button" type="Button" parent="Panel/VBoxContainer"]
 margin_top = 223.0
