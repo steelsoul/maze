@@ -4,9 +4,9 @@ signal game_over
  
 var MazeGenerator = preload("res://code/MazeGenerator.gd")
 
-enum CellType {CLOSE, LEFT, UP, ADDITIONAL}
+enum CellType {CLOSE, LEFT, UP, ADDITIONAL, BARRICADE, SOLUTION}
 
-func setup_maze(maze):
+func setup_maze(maze, quest = null):
 	var dim = maze[0]
 	var rep = maze[1]
 
@@ -35,6 +35,14 @@ func setup_maze(maze):
 		$Map.set_cellv(Vector2(dim.x, i), 1)
 		add_occluder_to_shapes(dim.x, i, CellType.LEFT)
 	$Map.set_cellv(Vector2(dim.x, dim.y), 2)
+	if quest != null and quest.is_enabled():
+		var obstacle_index = quest.doors_[0]
+		var obstacle_position = MazeGenerator.get_coordinate_from_index(obstacle_index, dim)
+		$Map.set_cellv(obstacle_position, CellType.BARRICADE)
+		var solution_index = quest.keys_[0]
+		var key_position = MazeGenerator.get_coordinate_from_index(solution_index, dim)
+		$Map.set_cellv(key_position, CellType.SOLUTION)
+		
 
 func check_corner_case_condition(rep, dim, x, y):
 	if (x >= dim.x-1) || (y >= dim.y-1): return false

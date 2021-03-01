@@ -3,7 +3,11 @@ extends Node2D
 export (PackedScene) var Maze
 
 onready var MazeGenerator = load("res://code/MazeGenerator.gd")
+onready var QueastHolder = load("res://code/QuestHolder.gd")
+
 var maze_generator: MazeGenerator = null
+var quest_holder: QuestHolder = null
+
 onready var configuration_ = $CanvasLayer/Configuration
 var thread: Thread = null
 
@@ -11,7 +15,6 @@ func _on_Configuration_configuration_done():
 	configuration_.hide()
 	maze_generator = MazeGenerator.new(configuration_.get_dim())
 	maze_generator.connect("generation_done", self, "_on_Generation_done")
-	
 	thread = Thread.new()
 	$CanvasLayer/InProgressLabel.show()
 	thread.start(self, "generator_thread", [configuration_, maze_generator])
@@ -40,7 +43,8 @@ func _on_Maze_game_over():
 	configuration_.show()
 
 func _on_Timer_timeout():
-	$Maze.setup_maze(maze_generator.get_maze())
+	quest_holder = QuestHolder.new(maze_generator.get_maze(), configuration_.is_quest_mode())
+	$Maze.setup_maze(maze_generator.get_maze(), quest_holder)
 	thread.wait_to_finish()
 	thread = null
 	maze_generator = null

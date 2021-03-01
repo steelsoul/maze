@@ -2,14 +2,19 @@ class_name QuestHolder
 
 var MazeSolver = preload("res://code/MazeSolver.gd")
 
+var enable_ = false
 var doors_ = []
 var keys_ = []
 var dim_: Vector2
 var rep_
 
-func _init(dim, rep):
-	dim_ = dim
-	rep_ = rep
+func is_enabled():
+	return enable_
+
+func _init(maze, enable):
+	dim_ = maze[0]
+	rep_ = maze[1]
+	enable_ = enable
 	var maze_solver = MazeSolver.new(dim_, rep_)
 	var start: Vector2 = Vector2.ZERO
 	var end: Vector2 = Vector2(dim_.x - 1, dim_.y - 1)
