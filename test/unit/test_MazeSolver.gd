@@ -57,4 +57,22 @@ func test_MazeSolver_solve():
 		else:
 			assert_eq(abs(diff.y), 1)
 	assert_eq(solution.back(), 24)
-			
+
+func test_MazeSolver_getInnerSpace():
+	var start = Vector2(0, 0)
+	var finish = Vector2(4, 4)
+	maze_solver_.solve_maze_with_wave_tracing(start.x, start.y, finish.x, finish.y)
+	var solution = maze_solver_.get_solution(finish)
+	var middle_idx = solution.size() / 2
+	var starting_inner_space = maze_solver_.get_inner_space(start.x, start.y)
+	
+	var mod_rep = maze_rep_
+	var dim = Vector2(5,5)
+	mod_rep[middle_idx] = MazeGenerator.CellKind.CLOSE
+	var solver1 = MazeSolver.new(dim, mod_rep)
+	var new_inner_space = solver1.get_inner_space(start.x, start.y)
+	
+	assert_false(new_inner_space.empty())
+	assert_false(starting_inner_space.empty())
+	assert_gt(starting_inner_space.size(), new_inner_space.size(), "New inner space shall be less than initial one!")
+	

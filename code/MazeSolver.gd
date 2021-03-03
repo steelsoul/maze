@@ -16,9 +16,12 @@ func _init(dimension, rep):
 	init_marks()
 	pass
 
+# TODO: use this function in solve_maze_with_wave_tracing()
 func get_inner_space(xs, ys):
-	init_marks()
+	var marks_array = []
+	init_marks(marks_array)
 	var n_iter = 1
+	marks_array[translate2index(xs,ys)] = n_iter
 	
 	while true:
 		var x = 0
@@ -26,18 +29,21 @@ func get_inner_space(xs, ys):
 		while x < dimension_.x:
 			var y = 0
 			while y < dimension_.y:
-				if marks_array_[translate2index(x,y)] == n_iter:
+				if marks_array[translate2index(x,y)] == n_iter:
 					for dir in Dir.values():
-						if can_go(x, y, dir) and check_marks_array(x, y, dir, 0):
+						if can_go(x, y, dir) and check_marks_array(x, y, dir, 0, marks_array):
 							no_further_steps = false
-							mark_neighbour(x, y, dir, n_iter + 1)
+							mark_neighbour(x, y, dir, n_iter + 1, marks_array)
 				y = y + 1
 			x = x + 1
 		n_iter = n_iter + 1
 		if no_further_steps: 
 			break
-			
-	return marks_array_
+	var inner_space = []
+	for index in range(marks_array.size()):
+		if marks_array[index] != 0: inner_space.append(index)
+		
+	return inner_space
 
 func solve_maze_with_wave_tracing(xs, ys, xf, yf):
 	init_marks()
@@ -63,11 +69,11 @@ func solve_maze_with_wave_tracing(xs, ys, xf, yf):
 		n_iter = n_iter + 1
 		if no_further_steps: return false
 
-func init_marks():
-	marks_array_.clear()
-	marks_array_.resize(dimension_.x * dimension_.y)
-	for i in marks_array_.size():
-		marks_array_[i] = 0
+func init_marks(marks_array = marks_array_):
+	marks_array.clear()
+	marks_array.resize(dimension_.x * dimension_.y)
+	for i in marks_array.size():
+		marks_array[i] = 0
 
 func point2index(p):
 	return MazeGenerator.get_index_from_coord(p, dimension_)
@@ -107,25 +113,25 @@ func validate_pos(pos: Vector2):
 	var h = dimension_.y
 	return pos.x >= 0 and pos.x < w and pos.y >= 0 and pos.y < h
 
-func check_marks_array(x, y, dir, expected):
+func check_marks_array(x, y, dir, expected, marks_array = marks_array_):
 	var w = dimension_.x
 	var h = dimension_.y
 	match dir:
 		Dir.LEFT:
-			return marks_array_[translate2index(x-1, y)] == expected
+			return marks_array[translate2index(x-1, y)] == expected
 		Dir.RIGHT:
-			return marks_array_[translate2index(x+1, y)] == expected
+			return marks_array[translate2index(x+1, y)] == expected
 		Dir.UP:
-			return marks_array_[translate2index(x, y-1)] == expected
+			return marks_array[translate2index(x, y-1)] == expected
 		Dir.DOWN:
-			return marks_array_[translate2index(x, y+1)] == expected
+			return marks_array[translate2index(x, y+1)] == expected
 
-func mark_neighbour(x, y, dir, n_iter):
+func mark_neighbour(x, y, dir, n_iter, marks_array = marks_array_):
 	match dir:
-		Dir.LEFT:  marks_array_[translate2index(x-1,y)] = n_iter
-		Dir.RIGHT: marks_array_[translate2index(x+1,y)] = n_iter
-		Dir.UP:    marks_array_[translate2index(x,y-1)] = n_iter
-		Dir.DOWN:  marks_array_[translate2index(x,y+1)] = n_iter
+		Dir.LEFT:  marks_array[translate2index(x-1,y)] = n_iter
+		Dir.RIGHT: marks_array[translate2index(x+1,y)] = n_iter
+		Dir.UP:    marks_array[translate2index(x,y-1)] = n_iter
+		Dir.DOWN:  marks_array[translate2index(x,y+1)] = n_iter
 
 func check_finish(x, y, xf, yf, dir):
 	var xn = x
