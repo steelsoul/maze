@@ -137,6 +137,7 @@ custom_styles/normal = SubResource( 5 )
 margin_top = 180.0
 margin_right = 456.0
 margin_bottom = 196.0
+custom_constants/separation = 37
 
 [node name="QuestLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer5"]
 margin_right = 160.0

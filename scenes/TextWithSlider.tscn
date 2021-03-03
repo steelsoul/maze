@@ -22,7 +22,7 @@ size_flags_horizontal = 0
 size_flags_stretch_ratio = 0.0
 
 [node name="Label" type="Label" parent="HBoxContainer/DigitContainer"]
-margin_right = 32.0
+margin_right = 20.0
 margin_bottom = 16.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -30,7 +30,7 @@ rect_min_size = Vector2( 20, 0 )
 size_flags_horizontal = 9
 size_flags_vertical = 14
 custom_fonts/font = ExtResource( 2 )
-text = "35"
+text = "3"
 
 [node name="HSlider" type="HSlider" parent="HBoxContainer"]
 margin_left = 37.0
