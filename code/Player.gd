@@ -14,13 +14,13 @@ func deactivate():
 
 func set_direction_from_keyboard_input():
 	var direct_vector = Vector2.ZERO
-	if Input.is_key_pressed(KEY_LEFT):
+	if Input.is_action_pressed("go_left"):
 		direct_vector.x -= 1
-	elif Input.is_key_pressed(KEY_RIGHT):
+	elif Input.is_action_pressed("go_right"):
 		direct_vector.x += 1
-	if Input.is_key_pressed(KEY_UP):
+	if Input.is_action_pressed("go_up"):
 		direct_vector.y -= 1
-	elif Input.is_key_pressed(KEY_DOWN):
+	elif Input.is_action_pressed("go_down"):
 		direct_vector.y += 1
 	return direct_vector
 
