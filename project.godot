@@ -79,4 +79,5 @@ cheat={
 [rendering]
 
 vram_compression/import_etc=true
+environment/default_clear_color=Color( 0.447059, 0.427451, 0.317647, 1 )
 environment/default_environment="res://resource/default_env.tres"
