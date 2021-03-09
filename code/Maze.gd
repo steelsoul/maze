@@ -3,9 +3,10 @@ extends Node2D
 signal game_over
  
 var MazeGenerator = preload("res://code/MazeGenerator.gd")
+var CellHolder = preload("res://code/CellHolder.gd")
 
-enum CellType {CLOSE, LEFT, UP, ADDITIONAL, BARRICADE, SOLUTION}
-
+enum CellType {CLOSE, LEFT, UP, ADDITIONAL}
+enum FloorCellType {FLOOR, SOLUTION, BARRICADE}
 func setup_maze(maze, quest = null):
 	var dim = maze[0]
 	var rep = maze[1]
@@ -35,13 +36,17 @@ func setup_maze(maze, quest = null):
 		$Map.set_cellv(Vector2(dim.x, i), 1)
 		add_occluder_to_shapes(dim.x, i, CellType.LEFT)
 	$Map.set_cellv(Vector2(dim.x, dim.y), 2)
+	
 	if quest != null and quest.is_enabled():
 		var obstacle_index = quest.doors_[0]
 		var obstacle_position = MazeGenerator.get_coordinate_from_index(obstacle_index, dim)
-		$Map.set_cellv(obstacle_position, CellType.BARRICADE)
+		var obstacle_holder = CellHolder.new(CellHolder.Type.Block, $Floor)
+		obstacle_holder.position = $Floor.map_to_world(obstacle_position)
+		$Holders.add_child(obstacle_holder)
+		#$Floor.set_cellv(obstacle_position, 5)
 		var solution_index = quest.keys_[0]
 		var key_position = MazeGenerator.get_coordinate_from_index(solution_index, dim)
-		$Map.set_cellv(key_position, CellType.SOLUTION)
+		$Floor.set_cellv(key_position, 4)
 		
 
 func check_corner_case_condition(rep, dim, x, y):

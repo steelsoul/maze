@@ -1,5 +1,6 @@
 extends KinematicBody2D
 
+var keys = []
 var is_activated = false
 
 func activate():
@@ -42,3 +43,8 @@ func _physics_process(_delta):
 
 func turn_light_on():
 	$Light2D.show()
+
+func pickup_key(location):
+	keys.append(location)
+
+

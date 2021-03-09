@@ -2,4 +2,7 @@
 
 MP - add Quest
  - Implement QuestHolder
+	- generate quest
+	- player can pick up key
+	- player can use key
  - Implement barricades
