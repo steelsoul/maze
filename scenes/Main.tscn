@@ -40,6 +40,11 @@ __meta__ = {
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.035
 one_shot = true
+
+[node name="GenerationTimer" type="Timer" parent="."]
+wait_time = 0.074
+one_shot = true
 [connection signal="game_over" from="Maze" to="." method="_on_Maze_game_over"]
 [connection signal="configuration_done" from="CanvasLayer/Configuration" to="." method="_on_Configuration_configuration_done"]
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="timeout" from="GenerationTimer" to="." method="_on_GenerationTimer_timeout"]

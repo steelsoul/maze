@@ -8,6 +8,8 @@ var marks_array_ 	= []
 var dimension_ 		= Vector2.ZERO
 var rep_			= []
 
+signal solving
+
 enum Dir {LEFT, RIGHT, DOWN, UP}
 
 func _init(dimension, rep):
@@ -45,7 +47,7 @@ func get_inner_space(xs, ys):
 		
 	return inner_space
 
-func solve_maze_with_wave_tracing(xs, ys, xf, yf):
+func solve_maze_with_wave_tracing(xs, ys, xf, yf, control_node = null):
 	init_marks()
 	var n_iter = 1
 	marks_array_[translate2index(xs,ys)] = n_iter
@@ -66,6 +68,9 @@ func solve_maze_with_wave_tracing(xs, ys, xf, yf):
 								return true
 				y = y + 1
 			x = x + 1
+			if control_node != null and x == dimension_.x / 2:
+				control_node.emit_signal("generation_progress", x, y)
+				
 		n_iter = n_iter + 1
 		if no_further_steps: return false
 

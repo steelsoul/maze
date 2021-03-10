@@ -17,7 +17,7 @@ func _init(dimensions: Vector2):
 	dimension_ = dimensions
 	rep_.resize(dimension_.x * dimension_.y)
 
-func generate_prima():
+func generate_prima(controller):
 	fill_maze_with_walls()
 	
 	var attribute_array = []
@@ -38,13 +38,17 @@ func generate_prima():
 			break
 		else:
 			random_index = randi() % border_result.size()
-#			print("progress: ", border_indexes.size() / (dim.x * dim.y) * 100)
+			#print("progress: ", border_result.size() / (dimension_.x * dimension_.y) * 100)
 			var random_location_index = border_result[random_index]
 			attribute_array[random_location_index] = PrimaStageAttribute.INSIDE
 			change_attribute_for_neighbours(PrimaStageAttribute.BORDER, PrimaStageAttribute.OUTSIDE, random_location_index, attribute_array)
 			var dest_neighbour = get_random_destination_neighbour(random_location_index, attribute_array)
 			break_the_wall(get_coordinate_from_index(random_location_index, dimension_), dest_neighbour)
-
+		var progress = (100 * border_result.size() / (dimension_.x * dimension_.y)) as int
+		if progress % 50 == 0:
+			emit_signal("generation_progress")
+			yield(controller, "generation_updated")
+			print("continue ", border_result.size())
 	emit_signal("generation_done")
 
 func fill_maze_with_walls():
@@ -115,7 +119,7 @@ func break_the_wall(current, dest):
 	else:
 		rep_[translate2index(current.x,current.y)] &= 1
 
-func generate_kruskal():
+func generate_kruskal(controller):
 	var width = dimension_.x
 	var height = dimension_.y
 	var locations = width * height
@@ -134,6 +138,9 @@ func generate_kruskal():
 		if not has_path(first_location, second_location):
 			break_the_wall(first_location, second_location)
 			locations = locations - 1
+		if locations as int % 30 == 0:
+			emit_signal("generation_progress")
+			yield(controller, "generation_updated")
 	emit_signal("generation_done")
 
 func make_array_of_walls(width, height):
@@ -161,7 +168,8 @@ func get_locations_separated_by_wall(random_wall):
 
 func has_path(from, to):
 	var maze_solver = MazeSolver.new(dimension_, rep_)
-	return maze_solver.solve_maze_with_wave_tracing(from.x, from.y, to.x, to.y)
+	var result = maze_solver.solve_maze_with_wave_tracing(from.x, from.y, to.x, to.y, self)
+	return result
 
 func get_maze():
 	return [dimension_, rep_]
