@@ -82,6 +82,7 @@ func cleanup():
 	$Goal.hide()
 	$Map.clear()
 	$Player.deactivate()
+	enable_input_layer(false)
 
 func _on_Goal_reach_goal():
 	emit_signal("game_over")
@@ -112,3 +113,31 @@ func add_occluder_to_shapes(x, y, cellkind):
 func set_night_mode():
 	$CanvasModulate.show()
 	$ShadowCasters.show()
+
+func enable_input_layer(enable=true):
+	if enable:
+		$Input/InpulPane.show()
+	else:
+		$Input/InpulPane.hide()
+
+func _on_LU_button_down():
+	var direction = Vector2.ZERO
+	if $Input/InpulPane/NW.is_pressed():
+		direction += Vector2(-1, -1)
+	if $Input/InpulPane/N.is_pressed():
+		direction += Vector2(0, -1)
+	if $Input/InpulPane/NE.is_pressed():
+		direction += Vector2(1, -1)
+	if $Input/InpulPane/W.is_pressed():
+		direction += Vector2(-1, 0)
+	if $Input/InpulPane/E.is_pressed():
+		direction += Vector2(1, 0)
+	if $Input/InpulPane/SW.is_pressed():
+		direction += Vector2(-1, 1)
+	if $Input/InpulPane/S.is_pressed():
+		direction += Vector2(0, 1)
+	if $Input/InpulPane/SE.is_pressed():
+		direction += Vector2(1, 1)
+	if $Input/InpulPane/C.is_pressed():
+		direction = Vector2.ZERO
+	$Player.set_direct_direction(direction)

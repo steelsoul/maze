@@ -2,6 +2,7 @@ extends KinematicBody2D
 
 var keys = []
 var is_activated = false
+var direct_direction: Vector2
 
 func activate():
 	$Camera2D.current = true
@@ -37,9 +38,15 @@ func _physics_process(_delta):
 		direct_vector = set_direction_from_gravity_sensor().clamped(1.0) * 3
 	else:
 		direct_vector = set_direction_from_keyboard_input() * 3
+		
+	if direct_vector == Vector2.ZERO:
+		direct_vector = direct_direction
 	
 	if direct_vector.length_squared() > 0.25:
 		move_and_collide(direct_vector)
+
+func set_direct_direction(direction: Vector2):
+	direct_direction = direction
 
 func turn_light_on():
 	$Light2D.show()
