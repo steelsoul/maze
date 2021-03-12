@@ -1,6 +1,7 @@
 * MAZE ROADMAP *
 
 MP - add Quest
+ - Add fog in the map (12/03/2021)
  - Implement QuestHolder
 	- generate quest
 	- player can pick up key
