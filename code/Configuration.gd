@@ -23,3 +23,6 @@ func is_night_mode():
 
 func is_quest_mode():
 	return $Panel/VBoxContainer/HBoxContainer5/QuestModeCB.pressed
+
+func is_hucontrol():
+	return $Panel/VBoxContainer/HBoxContainer6/HUModeCB.pressed
