@@ -7,6 +7,9 @@ var CellHolder = preload("res://code/CellHolder.gd")
 
 enum CellType {CLOSE, LEFT, UP, ADDITIONAL}
 enum FloorCellType {FLOOR, SOLUTION, BARRICADE}
+
+const ball_regions_to_clear = 40
+
 func setup_maze(maze, quest = null):
 	var dim = maze[0]
 	var rep = maze[1]
@@ -47,7 +50,10 @@ func setup_maze(maze, quest = null):
 		var solution_index = quest.keys_[0]
 		var key_position = MazeGenerator.get_coordinate_from_index(solution_index, dim)
 		$Floor.set_cellv(key_position, 4)
-		
+	
+	place_fog(dim)
+	$Player.connect("moving", self, "on_player_movement")
+	on_player_movement()
 
 func check_corner_case_condition(rep, dim, x, y):
 	if (x >= dim.x-1) || (y >= dim.y-1): return false
@@ -74,6 +80,14 @@ func setup_game(player_pos: Vector2, goal_pos: Vector2, night_mode = false):
 	else:
 		$CanvasModulate.hide()
 		$ShadowCasters.hide()
+
+func place_fog(cover_dim: Vector2):
+	var k = 150 / 64 + 1
+	var side_adj = 0
+	for x in range(0, cover_dim.x*k + 2*side_adj):
+		for y in range(0, cover_dim.y*k + 2*side_adj):
+			# adding fog
+			$Fog.set_cellv(Vector2(x,y), 0)
 
 func cleanup():
 	for x in $ShadowCasters.get_children():
@@ -141,3 +155,13 @@ func _on_LU_button_down():
 	if $Input/InpulPane/C.is_pressed():
 		direction = Vector2.ZERO
 	$Player.set_direct_direction(direction)
+
+func on_player_movement():
+	var k = ball_regions_to_clear
+	for x in range(0, 6):
+		for y in range(0, 6):
+			var xoffset = k/2 * x - k
+			var yoffset = k/2 * y - k
+			var adj = $Fog.to_local($Player.position) + Vector2(xoffset, yoffset)
+			var loc = $Fog.world_to_map(adj)
+			$Fog.set_cellv(loc, -1)
