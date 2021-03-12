@@ -3,6 +3,8 @@ extends KinematicBody2D
 var keys = []
 var is_activated = false
 
+signal moving
+
 func activate():
 	$Camera2D.current = true
 	is_activated = true
@@ -40,6 +42,7 @@ func _physics_process(_delta):
 	
 	if direct_vector.length_squared() > 0.25:
 		move_and_collide(direct_vector)
+		emit_signal("moving")
 
 func turn_light_on():
 	$Light2D.show()
