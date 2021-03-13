@@ -50,7 +50,8 @@ func _on_Timer_timeout():
 	var start_point = Vector2.ZERO
 	var goal_point = configuration_.get_dim() - Vector2(1,1)
 	var night_mode = configuration_.is_night_mode()
-	$Maze.setup_game(start_point, goal_point, night_mode)
+	var has_fog = configuration_.has_fog()
+	$Maze.setup_game(start_point, goal_point, night_mode, has_fog)
 	if $CanvasLayer/Configuration.is_hucontrol():
 		$Maze.enable_input_layer()
 	$Maze.show()

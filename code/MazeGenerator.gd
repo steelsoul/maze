@@ -48,7 +48,7 @@ func generate_prima(controller):
 		if progress % 50 == 0:
 			emit_signal("generation_progress")
 			yield(controller, "generation_updated")
-			print("continue ", border_result.size())
+			#print("continue ", border_result.size())
 	emit_signal("generation_done")
 
 func fill_maze_with_walls():

@@ -133,6 +133,22 @@ custom_styles/pressed = SubResource( 3 )
 custom_styles/hover_pressed = SubResource( 4 )
 custom_styles/normal = SubResource( 5 )
 
+[node name="FogLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer4"]
+margin_left = 258.0
+margin_right = 306.0
+margin_bottom = 16.0
+custom_fonts/font = ExtResource( 4 )
+text = "FOG"
+
+[node name="FogCB" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer4"]
+margin_left = 351.0
+margin_right = 367.0
+margin_bottom = 16.0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/hover_pressed = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
+
 [node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer"]
 margin_top = 180.0
 margin_right = 456.0

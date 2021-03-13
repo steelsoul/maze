@@ -4,20 +4,20 @@ signal game_over
  
 var MazeGenerator = preload("res://code/MazeGenerator.gd")
 var CellHolder = preload("res://code/CellHolder.gd")
-
+var dimension: Vector2
 enum CellType {CLOSE, LEFT, UP, ADDITIONAL}
 enum FloorCellType {FLOOR, SOLUTION, BARRICADE}
 
 const ball_regions_to_clear = 40
 
 func setup_maze(maze, quest = null):
-	var dim = maze[0]
+	dimension = maze[0]
 	var rep = maze[1]
 
-	for y in range(dim.y):
-		for x in range(dim.x):
+	for y in range(dimension.y):
+		for x in range(dimension.x):
 			$Floor.set_cellv(Vector2(x,y), 1)
-			match rep[MazeGenerator.get_index_from_coord(Vector2(x,y), dim)]:
+			match rep[MazeGenerator.get_index_from_coord(Vector2(x,y), dimension)]:
 				MazeGenerator.CellKind.OPEN:
 					pass
 				MazeGenerator.CellKind.CLOSE:
@@ -29,31 +29,27 @@ func setup_maze(maze, quest = null):
 				MazeGenerator.CellKind.HAS_LEFT:
 					$Map.set_cellv(Vector2(x,y), 1)
 					add_occluder_to_shapes(x,y,CellType.LEFT)
-			if check_corner_case_condition(rep, dim, x, y):
+			if check_corner_case_condition(rep, dimension, x, y):
 				$Map.set_cellv(Vector2(x+1, y+1), 2)
 				add_occluder_to_shapes(x+1,y+1,CellType.ADDITIONAL)
-	for i in range(dim.x):
-		$Map.set_cellv(Vector2(i, dim.y), 0)
-		add_occluder_to_shapes(i, dim.y, CellType.UP)
-	for i in range(dim.y):
-		$Map.set_cellv(Vector2(dim.x, i), 1)
-		add_occluder_to_shapes(dim.x, i, CellType.LEFT)
-	$Map.set_cellv(Vector2(dim.x, dim.y), 2)
+	for i in range(dimension.x):
+		$Map.set_cellv(Vector2(i, dimension.y), 0)
+		add_occluder_to_shapes(i, dimension.y, CellType.UP)
+	for i in range(dimension.y):
+		$Map.set_cellv(Vector2(dimension.x, i), 1)
+		add_occluder_to_shapes(dimension.x, i, CellType.LEFT)
+	$Map.set_cellv(Vector2(dimension.x, dimension.y), 2)
 	
 	if quest != null and quest.is_enabled():
 		var obstacle_index = quest.doors_[0]
-		var obstacle_position = MazeGenerator.get_coordinate_from_index(obstacle_index, dim)
+		var obstacle_position = MazeGenerator.get_coordinate_from_index(obstacle_index, dimension)
 		var obstacle_holder = CellHolder.new(CellHolder.Type.Block, $Floor)
 		obstacle_holder.position = $Floor.map_to_world(obstacle_position)
 		$Holders.add_child(obstacle_holder)
 		#$Floor.set_cellv(obstacle_position, 5)
 		var solution_index = quest.keys_[0]
-		var key_position = MazeGenerator.get_coordinate_from_index(solution_index, dim)
+		var key_position = MazeGenerator.get_coordinate_from_index(solution_index, dimension)
 		$Floor.set_cellv(key_position, 4)
-	
-	place_fog(dim)
-	$Player.connect("moving", self, "on_player_movement")
-	on_player_movement()
 
 func check_corner_case_condition(rep, dim, x, y):
 	if (x >= dim.x-1) || (y >= dim.y-1): return false
@@ -63,7 +59,7 @@ func check_corner_case_condition(rep, dim, x, y):
 	# first shall be UP otherwords be 1X
 	return rep[id1] & 2 == 2
 
-func setup_game(player_pos: Vector2, goal_pos: Vector2, night_mode = false):
+func setup_game(player_pos: Vector2, goal_pos: Vector2, night_mode = false, has_fog = false):
 	var cell_size_2 = $Map.cell_size / 2
 	var const_offset = Vector2(10, 10)
 	$Player.position = ($Map.map_to_world(player_pos, false) + cell_size_2) * $Map.scale + const_offset
@@ -80,6 +76,14 @@ func setup_game(player_pos: Vector2, goal_pos: Vector2, night_mode = false):
 	else:
 		$CanvasModulate.hide()
 		$ShadowCasters.hide()
+		
+	if has_fog:
+		place_fog(dimension)
+		$Fog.show()
+		$Player.connect("moving", self, "on_player_movement")
+		on_player_movement()
+	else:
+		$Fog.hide()
 
 func place_fog(cover_dim: Vector2):
 	var k = 150 / 64 + 1

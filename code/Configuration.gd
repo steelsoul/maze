@@ -26,3 +26,6 @@ func is_quest_mode():
 
 func is_hucontrol():
 	return $Panel/VBoxContainer/HBoxContainer6/HUModeCB.pressed
+
+func has_fog():
+	return $Panel/VBoxContainer/HBoxContainer4/FogCB.pressed
